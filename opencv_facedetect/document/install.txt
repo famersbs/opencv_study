@@ -6,8 +6,32 @@
 	: 내가 쓰는거 복사
 	
 	: 라이브러리 추가
-	
+		property > c / c++ General > Paths and Symbols > Include
+		
+			: GNU C++ > /usr/local/lib
+		
+		property > c / c++ General > Paths and Symbols > Libraries
+		
+		opencv_gpu
+		opencv_imgproc
+		opencv_legacy
+		opencv_ml
+		opencv_objdetect
+		opencv_ts
+		opencv_video
+		opencv_flann
+		opencv_calib3d
+		opencv_contrib
+		opencv_features2d
+		opencv_core
+		opencv_highgui
+		
+		property > c / c++ General > Paths and Symbols > Libraries Paths
+		
+		/usr/local/lib
+		
 
 3. git 에서 프로젝트 export 
+	https://github.com/famersbs/opencv_study.git
 
-4. 
+4. 테스트 ~!
