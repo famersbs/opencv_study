@@ -23,7 +23,7 @@ int main(int argc, char* argv[])  {
 			return -2;
 		}
 
-		IplImage* m_pImage =cvLoadImage( "./res/a.jpeg"   );
+		IplImage* m_pImage =cvLoadImage( "./res/b.jpeg"   );
 		if(!m_pImage){
 			printf("Could not load image file: %s\n",argv[1]);
 			exit(0);
