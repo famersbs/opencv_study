@@ -1,0 +1,13 @@
+1. open cv 설치
+	: http://kimoppa.tistory.com/3
+	
+	
+2. Eclipse 설치
+	: 내가 쓰는거 복사
+	
+	: 라이브러리 추가
+	
+
+3. git 에서 프로젝트 export 
+
+4. 
