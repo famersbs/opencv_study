@@ -35,3 +35,23 @@
 	https://github.com/famersbs/opencv_study.git
 
 4. 테스트 ~!
+
+
+-----------------------------------------------
+
+http://wiki.openttd.org/Compiling_on_MinGW#Installing_MinGW_and_MSYS
+
+-- ocr 라이브러리 설치  - mingw 에서...
+http://www.sk-spell.sk.cx/compiling-leptonica-and-tesseract-ocr-with-mingwmsys
+
+	: export LDFLAGS="-L/usr/local/lib"  	--> libpng 설치 전에 실행해 주어야 한다 --> 라이브러리 경로를 지정하는 환경 변수인듯
+	
+	export PATH=$PATH:/usr/local/bin
+	export LD_LIBRARY_PATH=/usr/local/lib
+	export C_INCLUDE_PATH=/usr/local/include
+	export CPLUS_INCLUDE_PATH=/usr/local/include
+	: configure --prefix=/usr/local			--> 경로 설정을 해 주어야 함 
+	
+	
+-- DLL Lib 를 .a 로 변환 하기
+	http://blog.daum.net/ezway/21
