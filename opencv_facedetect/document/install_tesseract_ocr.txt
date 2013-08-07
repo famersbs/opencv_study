@@ -1,7 +1,0 @@
-* macport 프로그램을 통한 인스톨
-
-	https://distfiles.macports.org/MacPorts/
-	
-	http://hyunjong.tistory.com/entry/OSX-MacPort-%EC%82%AC%EC%9A%A9%EB%B2%95
-	
-	http://blog.matt-swain.com/post/26419042500/installing-tesseract-ocr-on-mac-os-x-lion
