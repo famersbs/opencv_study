@@ -12,16 +12,15 @@
 #include "tesseract/baseapi.h"
 
 int main() {
+
 	// [1]
-	tesseract::TessBaseAPI *myOCR =
-			new tesseract::TessBaseAPI();
+	tesseract::TessBaseAPI *myOCR = new tesseract::TessBaseAPI();
 
 	// [2]
 	printf("Tesseract-ocr version: %s\n",
 		   myOCR->Version());
 	printf("Leptonica version: %s\n",
 		   getLeptonicaVersion());
-
 
 	// [3]
 	if (myOCR->Init( 0 , "eng")) {
@@ -43,6 +42,7 @@ int main() {
 	myOCR->End();
 	delete [] outText;
 	pixDestroy(&pix);
+
 	return 0;
 }
 
