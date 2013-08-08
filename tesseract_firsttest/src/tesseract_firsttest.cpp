@@ -23,13 +23,13 @@ int main() {
 		   getLeptonicaVersion());
 
 	// [3]
-	if (myOCR->Init( 0 , "kor")) {
+	if (myOCR->Init( 0 , "eng+kor")) {
 	  fprintf(stderr, "Could not initialize tesseract.\n");
 	  exit(1);
 	}
 
 	// [4]
-	Pix *pix = pixRead("./res/test.png");
+	Pix *pix = pixRead("./res/input.png");
 	myOCR->SetImage(pix);
 
 	// [5]
