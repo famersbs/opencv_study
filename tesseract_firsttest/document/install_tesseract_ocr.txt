@@ -1,4 +1,4 @@
-* macport วมทฮฑืทฅภป ล๋วั ภฮฝบล็
+* macport ํ”๋ก๊ทธ๋จ์ ํตํ• ์ธ์คํจ
 
 	https://distfiles.macports.org/MacPorts/
 	

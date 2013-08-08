@@ -23,13 +23,13 @@ int main() {
 		   getLeptonicaVersion());
 
 	// [3]
-	if (myOCR->Init( 0 , "kor")) {
+	if (myOCR->Init( 0 , "eng+kor")) {		// ë™ì‹œì— ì²˜ë¦¬ëŠ” ê°€ëŠ¥í•˜ì§€ë§Œ... ì—„ì²­ ëŠë¦¬ë‚´ ~!
 	  fprintf(stderr, "Could not initialize tesseract.\n");
 	  exit(1);
 	}
 
 	// [4]
-	Pix *pix = pixRead("./res/test.png");
+	Pix *pix = pixRead("./res/test2.png");
 	myOCR->SetImage(pix);
 
 	// [5]
@@ -45,5 +45,3 @@ int main() {
 
 	return 0;
 }
-
-// 3.0.2 ¹öÀüÀ¸·Î ¾÷±×·¹ÀÌµå ÇØ¾ß ÇÑ±ÛÀ» »ç¿ëÇÒ ¼ö ÀÖ´Ù~!!!

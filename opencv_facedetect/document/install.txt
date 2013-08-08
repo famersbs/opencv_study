@@ -1,11 +1,11 @@
-1. open cv ¼³Ä¡
+1. open cv ì„¤ì¹˜
 	: http://kimoppa.tistory.com/3
 	
 	
-2. Eclipse ¼³Ä¡
-	: ³»°¡ ¾²´Â°Å º¹»ç
+2. Eclipse ì„¤ì¹˜
+	: ë‚´ê°€ ì“°ëŠ”ê±° ë³µì‚¬
 	
-	: ¶óÀÌºê·¯¸® Ãß°¡
+	: ë¼ì´ë¸ŒëŸ¬ë¦¬ ì¶”ê°€
 		property > c / c++ General > Paths and Symbols > Include
 		
 			: GNU C++ > /usr/local/lib
@@ -31,31 +31,31 @@
 		/usr/local/lib
 		
 
-3. git ¿¡¼­ ÇÁ·ÎÁ§Æ® export 
+3. git ì—ì„œ í”„ë¡œì íŠ¸ export 
 	https://github.com/famersbs/opencv_study.git
 
-4. Å×½ºÆ® ~!
+4. í…ŒìŠ¤íŠ¸ ~!
 
 
 -----------------------------------------------
 
 http://wiki.openttd.org/Compiling_on_MinGW#Installing_MinGW_and_MSYS
 
--- ocr ¶óÀÌºê·¯¸® ¼³Ä¡  - mingw ¿¡¼­...
+-- ocr ë¼ì´ë¸ŒëŸ¬ë¦¬ ì„¤ì¹˜  - mingw ì—ì„œ...
 http://www.sk-spell.sk.cx/compiling-leptonica-and-tesseract-ocr-with-mingwmsys
 
-	: export LDFLAGS="-L/usr/local/lib"  	--> libpng ¼³Ä¡ Àü¿¡ ½ÇÇàÇØ ÁÖ¾î¾ß ÇÑ´Ù --> ¶óÀÌºê·¯¸® °æ·Î¸¦ ÁöÁ¤ÇÏ´Â È¯°æ º¯¼öÀÎµí
+	: export LDFLAGS="-L/usr/local/lib"  	--> libpng ì„¤ì¹˜ ì „ì— ì‹¤í–‰í•´ ì£¼ì–´ì•¼ í•œë‹¤ --> ë¼ì´ë¸ŒëŸ¬ë¦¬ ê²½ë¡œë¥¼ ì§€ì •í•˜ëŠ” í™˜ê²½ ë³€ìˆ˜ì¸ë“¯
 	
 	export PATH=$PATH:/usr/local/bin
 	export LD_LIBRARY_PATH=/usr/local/lib
 	export C_INCLUDE_PATH=/usr/local/include
 	export CPLUS_INCLUDE_PATH=/usr/local/include
-	: configure --prefix=/usr/local			--> °æ·Î ¼³Á¤À» ÇØ ÁÖ¾î¾ß ÇÔ 
+	: configure --prefix=/usr/local			--> ê²½ë¡œ ì„¤ì •ì„ í•´ ì£¼ì–´ì•¼ í•¨ 
 	
 	
--- DLL Lib ¸¦ .a ·Î º¯È¯ ÇÏ±â
+-- DLL Lib ë¥¼ .a ë¡œ ë³€í™˜ í•˜ê¸°
 	http://blog.daum.net/ezway/21
 	
--- mingw ·Î ÄÄÆÄÀÏ ¿Ï·á µÇ¾î ÀÖ´Â »çÀÌÆ®!!
+-- mingw ë¡œ ì»´íŒŒì¼ ì™„ë£Œ ë˜ì–´ ìˆëŠ” ì‚¬ì´íŠ¸!!
 	https://github.com/zdenop/tesseract-mingw
 	
