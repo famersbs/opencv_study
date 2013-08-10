@@ -1,86 +1,8 @@
-#include <iostream>
-#include <opencv/cv.h>
-#include <opencv2/highgui/highgui.hpp>
+#include "opencv_facedetect.h"
 
-using namespace cv;
+/*
+int cam_capture(){
 
-
-int main(int argc, char* argv[])  {
-
-	const char *classifer = "./res/haarcascade_frontalface_alt_tree.xml";
-
-		CvHaarClassifierCascade* cascade = 0;
-		cascade = (CvHaarClassifierCascade*) cvLoad(classifer, 0, 0, 0 );
-		if(!cascade){
-			std::cerr<<"error: cascade error!!"<<std::endl;
-			return -1;
-		}
-
-		CvMemStorage* storage = 0;
-		storage = cvCreateMemStorage(0);
-		if(!storage){
-			std::cerr<<"error: storage error!!"<<std::endl;
-			return -2;
-		}
-
-		IplImage* m_pImage =cvLoadImage( "./res/b.jpeg"   );
-		if(!m_pImage){
-			printf("Could not load image file: %s\n",argv[1]);
-			exit(0);
-		}
-
-		double scale = 1.3;
-
-		// øµªÛ ¡ÿ∫Ò
-		//
-		IplImage* gray = cvCreateImage( cvSize(m_pImage->width,m_pImage->height), 8, 1 );
-		IplImage* small_img = cvCreateImage(
-		    cvSize( cvRound(m_pImage->width/scale), cvRound(m_pImage->height/scale)), 8, 1
-		    );
-		cvCvtColor( m_pImage, gray, CV_BGR2GRAY );
-		cvResize( gray, small_img, CV_INTER_LINEAR );
-		cvEqualizeHist( small_img, small_img );
-
-		// ∞¥√º ∞À√‚
-		//
-		cvClearMemStorage( storage );
-		CvSeq* objects = cvHaarDetectObjects(
-		    small_img,
-		    cascade,
-		    storage,
-		    1.1,
-		    2,
-		    0   /*CV_HAAR_DO_CANNY_PRUNING*/,
-		    cvSize(30, 30)
-		    );
-
-		// ∞¥√º∏¶ √£∞Ì π⁄Ω∫∏¶ ±◊∏∞¥Ÿ.
-		//
-		for( int i = 0 ; i < (objects ? objects->total : 0) ; i++ )
-		{
-		    CvRect* r = (CvRect*)cvGetSeqElem( objects, i );
-		    CvPoint center;
-		    int radius;
-		    center.x = cvRound((r->x + r->width*0.5)*scale);
-		    center.y = cvRound((r->y + r->height*0.5)*scale);
-		    radius = cvRound((r->width + r->height)*0.25*scale);
-		    cvCircle( m_pImage, center, radius, cvScalar(255, 0, 0), 3, 8, 0 );
-		}
-
-		cvReleaseImage( &gray );
-		cvReleaseImage( &small_img );
-		cvReleaseMemStorage( &storage );
-
-		//Windowø° frame √‚∑¬
-		cvShowImage("haar example (exit = esc)",m_pImage);
-
-
-		while( true ){
-			//haar∏¶ ¿ÃøÎ«ÿ æÛ±º øµø™ ∞À√‚
-			if( cvWaitKey(50) == 27 ) break;
-		}
-
-		/*
 		capture = cvCaptureFromCAM(-1);
 		if(!capture){
 			std::cerr<<"error: Cannot open init webcam!"<<std::endl;
@@ -93,30 +15,196 @@ int main(int argc, char* argv[])  {
 			frame = cvQueryFrame(capture);
 			if(!frame||cvWaitKey(50)==27) { break; }
 
-			//haar∏¶ ¿ÃøÎ«ÿ æÛ±º øµø™ ∞À√‚
+			//haarÎ•º Ïù¥Ïö©Ìï¥ ÏñºÍµ¥ ÏòÅÏó≠ Í≤ÄÏ∂ú
 			CvSeq *faces = 0;
 			faces = cvHaarDetectObjects(frame, cascade, storage, 2.0, 1, 0);
 
-			//∞À√‚µ» ∏µÁ faceø° ¥Î«— π›∫ππÆ
+			//Í≤ÄÏ∂úÎêú Î™®Îì† faceÏóê ÎåÄÌïú Î∞òÎ≥µÎ¨∏
 			for(int i=0; i<faces->total; i++){
-				//face øµø™ ∞°¡Æø¿±‚
+				//face ÏòÅÏó≠ Í∞ÄÏ†∏Ïò§Í∏∞
 				CvRect *r = 0;
 				r = (CvRect*) cvGetSeqElem(faces, i);
 
-				//frameø° face øµø™ ±◊∏Æ±‚
+				//frameÏóê face ÏòÅÏó≠ Í∑∏Î¶¨Í∏∞
 				cvRectangle(frame, cvPoint(r->x, r->y), cvPoint(r->x+r->width, r->y+r->height), cvScalar(0,255,0), 3, CV_AA, 0);
 			}
 
-			//Windowø° frame √‚∑¬
+			//WindowÏóê frame Ï∂úÎ†•
 			cvShowImage("haar example (exit = esc)",frame);
 		}
 
-		//¿⁄ø¯ «ÿ¡¶
+		//ÏûêÏõê Ìï¥Ï†ú
 		cvReleaseCapture(&capture);
-		*/
-		cvReleaseMemStorage(&storage);
-		cvReleaseHaarClassifierCascade(&cascade);
-		cvDestroyWindow("haar example (exit = esc)");
+
+}
+*/
+
+int facedetect_test( const char* load_image, const char* result_window_id )  {
+
+	const char *classifer = "./res/haarcascade_frontalface_alt_tree.xml";
+
+	CvHaarClassifierCascade* cascade = 0;
+	cascade = (CvHaarClassifierCascade*) cvLoad(classifer, 0, 0, 0 );
+	if(!cascade){
+		std::cerr<<"error: cascade error!!"<<std::endl;
+		return -1;
+	}
+
+	CvMemStorage* storage = 0;
+	storage = cvCreateMemStorage(0);
+	if(!storage){
+		std::cerr<<"error: storage error!!"<<std::endl;
+		return -2;
+	}
+
+	//const char* load_image =  "./res/b.jpeg";
+
+	IplImage* m_pImage =cvLoadImage( load_image  );
+	if(!m_pImage){
+		printf("Could not load image file: %s\n", load_image);
+		exit(0);
+	}
+
+	double scale = 1.3;
+
+	// ÏòÅÏÉÅ Ï§ÄÎπÑ
+	//
+	IplImage* gray = cvCreateImage( cvSize(m_pImage->width,m_pImage->height), 8, 1 );
+	IplImage* small_img = cvCreateImage(
+		cvSize( cvRound(m_pImage->width/scale), cvRound(m_pImage->height/scale)), 8, 1
+		);
+	cvCvtColor( m_pImage, gray, CV_BGR2GRAY );
+	cvResize( gray, small_img, CV_INTER_LINEAR );
+	cvEqualizeHist( small_img, small_img );
+
+	// Í∞ùÏ≤¥ Í≤ÄÏ∂ú
+	//
+	cvClearMemStorage( storage );
+	CvSeq* objects = cvHaarDetectObjects(
+		small_img,
+		cascade,
+		storage,
+		1.1,
+		2,
+		0   /*CV_HAAR_DO_CANNY_PRUNING*/,
+		cvSize(30, 30)
+		);
+
+	// Í∞ùÏ≤¥Î•º Ï∞æÍ≥† Î∞ïÏä§Î•º Í∑∏Î¶∞Îã§.
+	//
+	for( int i = 0 ; i < (objects ? objects->total : 0) ; i++ )
+	{
+		CvRect* r = (CvRect*)cvGetSeqElem( objects, i );
+		CvPoint center;
+		int radius;
+		center.x = cvRound((r->x + r->width*0.5)*scale);
+		center.y = cvRound((r->y + r->height*0.5)*scale);
+		radius = cvRound((r->width + r->height)*0.25*scale);
+		cvCircle( m_pImage, center, radius, cvScalar(255, 0, 0), 3, 8, 0 );
+	}
+
+	//WindowÏóê frame Ï∂úÎ†•
+	cvShowImage( result_window_id, m_pImage);
+
+	// Ïù¥ÎØ∏ÏßÄ Ï†ïÎ¶¨
+	cvReleaseImage( &gray );
+	cvReleaseImage( &small_img );
+	cvReleaseMemStorage( &storage );
+
+	// Î¶¨ÏÜåÏä§ Ï†ïÎ¶¨
+	cvReleaseMemStorage(&storage);
+	cvReleaseHaarClassifierCascade(&cascade);
 
 	return 0;
+}
+
+
+int facedetect_test_img_binary( const char* load_image, const char* result_window_id ){
+
+	int threshold = 128; // ÏûÑÍ≥ÑÍ∞í(Threshold) ÏÑ§Ï†ï
+	IplImage* output = 0;
+	IplImage* gray = 0;
+
+	//const char* load_image =  "./res/b.jpeg";
+
+	IplImage* image = cvLoadImage( load_image  );
+	if(!image){
+		printf("Could not load image file: %s\n", load_image);
+		exit(0);
+	}
+
+	gray = cvCreateImage( cvGetSize(image), IPL_DEPTH_8U, 1); // ÌùëÎ∞± Ïù¥ÎØ∏ÏßÄ ÏÉùÏÑ±
+	output = cvCreateImage( cvGetSize(image), IPL_DEPTH_8U, 1); // ÌùëÎ∞± Ïù¥ÎØ∏ÏßÄ ÏÉùÏÑ±
+	cvCvtColor(image, gray, CV_RGB2GRAY); // Ïª¨Îü¨Î•º ÌùëÎ∞±ÏúºÎ°ú Î≥ÄÌôò
+
+
+	// ÏòÅÏÉÅÏùò Í∞Å ÌîΩÏÖÄ(x,y) Í∞íÏù¥ threshold Í∞íÏùò Ï¥àÍ≥ºÎäî 255 Î°ú, Í∑∏ Ïù¥ÌïòÎäî 0 ÏúºÎ°ú Î≥ÄÌôò
+	cvThreshold(gray, output, threshold, 255, CV_THRESH_BINARY);
+	output->origin = image->origin; // Î∞©Ìñ•Ïù¥ Îí§ÏßëÏñ¥ ÏßÑÍ≤ÉÏùÑ Î∞îÎ°ú Ïû°ÏïÑÏ§å
+	cvShowImage( result_window_id, output );
+
+
+	cvReleaseImage( &gray );
+	cvReleaseImage( &output );
+	cvReleaseImage( &image );
+
+	return 0;
+
+}
+
+struct stMap{
+ unsigned char r;
+ unsigned char g;
+ unsigned char b;
+} Map[1024][1024];
+void Img2Aray(IplImage* img);
+
+int facedetect_test_img_Laplacian( const char* load_image, const char* result_window_id ){
+
+	IplImage* img = cvLoadImage( load_image  );
+	if(!img){
+		printf("Could not load image file: %s\n", load_image);
+		exit(0);
+	}
+
+	int di[8] = {-1,-1,-1, 0, 0, 1, 1, 1},
+		dj[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+	int mask[3][3]={{ -1, -1, -1 },
+				   { -1,  8, -1 },
+				   { -1, -1, -1 }};
+
+	int p;
+	Img2Aray(img);
+
+	for(int i=1; i<img->height-1; i++){
+	   for(int j=1; j<img->width-1; j++){
+		   p = Map[i][j].r;
+		   p *= mask[1][1];
+		   for(int k=0; k<8; k++){
+			   p = p + ( (unsigned char)Map[i+di[k]][j+dj[k]].r * mask[1+di[k]][1+dj[k]] );
+		   }
+		   if(p > 255)  p = 255;
+		   else if(p < 0) p = 0;
+		   img->imageData[i*img->widthStep + j ] = (unsigned char)p;
+	   }
+	}
+
+	cvShowImage( result_window_id, img );
+
+	return 0;
+}
+
+void Img2Aray(IplImage* img) {
+
+ printf( "width : %d  height : %d\n", img->width, img->height );
+
+ for(int i=0; i<img->height/*240*/; i++){
+  for(int j=0; j<img->width/*320*/; j++){
+
+   Map[i][j].r = img->imageData[i*img->widthStep + j*img->nChannels + 2];
+   Map[i][j].g = img->imageData[i*img->widthStep + j*img->nChannels + 1];
+   Map[i][j].b = img->imageData[i*img->widthStep + j*img->nChannels + 0];
+
+  }
+ }
 }
