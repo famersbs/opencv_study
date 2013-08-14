@@ -1,0 +1,17 @@
+* 자동차 번호판 인식기 
+	http://martinblog.tistory.com/786
+	
+* 마커 추출
+	http://martinblog.tistory.com/831
+	
+* 문자인식에 대한 기본 확장과 수축 
+	http://martinblog.tistory.com/861
+	
+* 움직 이는 물체 추출
+	http://blog.naver.com/PostView.nhn?blogId=bnhun&logNo=30011509669
+	
+* 허프 변환 - 원형 찾기 문제
+	http://hongkwan.blogspot.kr/2013/01/opencv-7-2-example_26.html
+	
+* 이미지 비교
+	http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=50&MAEULNo=20&no=536083&ref=536078

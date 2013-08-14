@@ -17,6 +17,10 @@ int main(int argc, char* argv[])  {
 	cvNamedWindow( "img_Laplacian", 0 ); // 결과 영상을 띄울 윈도우
 	facedetect_test_img_Laplacian( load_image, "img_Laplacian" );
 
+	// diff Image ( 두 이미지의 다른 점을 찾아 내는 것? )
+
+
+
 	// 사용자 입력 대기
 	while( true ){
 		//haar를 이용해 얼굴 영역 검출
@@ -25,6 +29,12 @@ int main(int argc, char* argv[])  {
 
 	// 윈도우 삭제
 	cvDestroyAllWindows();
+
+
+
+	// 동영상 만들기
+	facedetect_test_create_avi( "./res/img_to_avi/3313/", "./res/img_to_avi/result.avi" );
+
 
 	// 이 객체를 이용해서 연속 이미지 저장이 가능하다... 흠... 그렇구만 ~!! )
 	//CvVideoWriter* VideoOut = NULL;
