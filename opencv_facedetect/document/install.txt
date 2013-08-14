@@ -59,3 +59,7 @@ http://www.sk-spell.sk.cx/compiling-leptonica-and-tesseract-ocr-with-mingwmsys
 -- mingw 로 컴파일 완료 되어 있는 사이트!!
 	https://github.com/zdenop/tesseract-mingw
 	
+	
+-- ubuntu 설치법
+	http://www.samontab.com/web/2011/06/installing-opencv-2-2-in-ubuntu-11-04/
+	
