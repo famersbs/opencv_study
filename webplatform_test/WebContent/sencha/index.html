@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Image Transfer</title>
+<link rel="stylesheet" type="text/css" href="app/css/app_css.css" />
+<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css" />
+
+<script type="text/javascript" src="js/ext-all.js" > </script>
+
+
+<script type="text/javascript">
+    Ext.Loader.setPath('Ext.app', 'app');
+</script>
+
+<script type="text/javascript" src="app/app.js" > </script>
+
+
+<script type="text/javascript">
+	var global_portal_port = null;
+	var imgtree_store = null;
+
+     Ext.require([
+         'Ext.layout.container.*',
+         'Ext.resizer.Splitter',
+         'Ext.fx.target.Element',
+         'Ext.fx.target.Component',
+         'Ext.window.Window',	
+//         'Ext.app.Portlet',
+//         'Ext.app.PortalColumn',
+//         'Ext.app.PortalPanel',
+//         'Ext.app.PortalDropZone'
+         //'Ext.app.GridPortlet',
+         //'Ext.app.ChartPortlet'
+     ]);
+
+     Ext.onReady(function(){
+     	global_portal_port = Ext.create('Ext.app.view.Portal');
+     });
+</script>
+</head>
+<body>
+
+</body>
+</html>
