@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" ng-app="myApp" >
+<head>
+  <meta charset="utf-8">
+  <title>My HTML File</title>
+  <!-- <link rel="stylesheet" href="css/app.css"> -->
+  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-responsive.min.css">
+  
+      <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+      @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+    </style>
+    <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+    
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script src="lib/angular/angular-strap.min.js"></script>
+  <script src="img_app/js/controllers.js"></script>
+</head>
+<body >
+
+	<!--  file upload -->
+	<!-- 
+    <div class="modal" modal="shouldBeOpen" close="close()" options="opts" ng-controller="ModalDemoCtrl">
+        <div class="modal-header">
+            <h3>I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="item in items">{{item}}</li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning cancel" ng-click="close()">Cancel</button>
+        </div>
+    </div>
+     -->
+
+  <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="naviGater" >
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Open CV Test UI</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              Logged in as <a href="#" class="navbar-link">Username</a>
+            </p>
+            <ul class="nav">
+              <li>              	
+              	<button type="button" class="btn" bs-modal="'upload.html'">UploadImage</button>
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+	</div>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list"  ng-controller="sideImgTreemenu" >
+              <li class="nav-header" >Sidebar</li>
+              <li ng-repeat="item in treeitem">
+              	<a ng-click="itemClick(item.name)">{{item.name}}</a>
+              </li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9" ng-controller="ImageViewCtrl">
+          
+          <div class="hero-unit">
+            <h1>{{mainImage.name}}</h1>
+            <p class="row-fluid">
+	            <img ng-src="{{mainImage.url}}origin" class="span2 img-rounded">
+	            <img ng-src="{{mainImage.url}}facedect" class="span2 img-rounded">
+	            <img ng-src="{{mainImage.url}}binary" class="span2 img-rounded">
+            </p>
+            <p><a href="#" class="btn btn-primary btn-large">View New Window &raquo;</a></p>
+          </div>
+          
+          <div class="row-fluid" ng-repeat="images in imageStore | partition:3">           
+            <div class="span4" ng-repeat="image in images">
+              <h2 ng-click="changeMainImg(image)">{{image.name}}</h2>
+              <p class="row-fluid">
+	            <img ng-src="{{image.url}}origin" class="span2 img-rounded">
+	            <img ng-src="{{image.url}}facedect" class="span2 img-rounded">
+	            <img ng-src="{{image.url}}binary" class="span2 img-rounded">
+              </p>
+            </div><!--/span-->            
+          </div><!--/row-->
+          
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster 
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+    -->
+</body>
+</html>

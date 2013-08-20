@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  <h3>Image File Upload</h3>
+</div>
+<div class="modal-body">
+	<form action="../data/uploadimage.jsp" method="POST" target="_BLANK" enctype="multipart/form-data"  >
+	  <fieldset>
+	    <label>Image title</label>
+	    <input name="name" type="text" placeholder="Type something…" />
+	    <label>Image File</label>
+	    <input name="photo" type="file" />
+	    <button type="submit" class="btn" ng-click="dismiss()">Submit</button>
+	  </fieldset>
+	</form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn" ng-click="dismiss()">Close</button>
+  <button class="btn btn-primary" ng-click="modal.saved=true;dismiss()">Save changes</button>
+</div>

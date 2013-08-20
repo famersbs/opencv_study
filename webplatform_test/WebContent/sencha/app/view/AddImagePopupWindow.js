@@ -49,7 +49,7 @@ Ext.define('Ext.app.view.AddImagePopupWindow', {
 						                    var form = this.up('form').getForm();
 						                    if(form.isValid()){
 						                        form.submit({
-						                            url: 'data/uploadimage.jsp',
+						                            url: '../data/uploadimage.jsp',
 						                            waitMsg: 'Uploading your photo...',
 						                            method: 'POST',
 						                            enctype : 'multipart/form-data',

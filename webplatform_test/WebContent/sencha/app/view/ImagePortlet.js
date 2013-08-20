@@ -35,9 +35,9 @@ Ext.define('Ext.app.view.ImagePortlet', {
 													    },
 													    autoScroll:true,
 													    items: [
-													    	{ items: Ext.create('Ext.Img', {src: 'data/getimage.jsp?name='+this.path_name+'&type=origin', width:300, height:300 } )},
-                   											{ items: Ext.create('Ext.Img', {src: 'data/getimage.jsp?name='+this.path_name+'&type=facedect', width:300, height:300 } )},
-                   											{ items: Ext.create('Ext.Img', {src: 'data/getimage.jsp?name='+this.path_name+'&type=binary', width:300, height:300 } )}
+													    	{ items: Ext.create('Ext.Img', {src: '../data/getimage.jsp?name='+this.path_name+'&type=origin', width:300, height:300 } )},
+                   											{ items: Ext.create('Ext.Img', {src: '../data/getimage.jsp?name='+this.path_name+'&type=facedect', width:300, height:300 } )},
+                   											{ items: Ext.create('Ext.Img', {src: '../data/getimage.jsp?name='+this.path_name+'&type=binary', width:300, height:300 } )}
                    											]
 													})
 					}

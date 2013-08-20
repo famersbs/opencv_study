@@ -34,9 +34,12 @@
 	%>
       {
          "name":"<%=list[i].getName() %>",
-         "id":"<%=list[i].getName() %>",  
-      },
-	<% 
+         "id":"<%=list[i].getName() %>"
+      }
+	<%
+			if( i < list.length -1  ){
+				%>,<%
+			}
 		}
  	%>    	
    ]

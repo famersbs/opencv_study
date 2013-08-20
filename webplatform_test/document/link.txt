@@ -1,1 +1,22 @@
 http://plnkr.co/
+
+
+
+-- 컴포넌트들
+http://mgcrea.github.io/angular-strap/#/modal
+
+http://minikomi.github.io/Bootstrap-Form-Builder/
+
+
+http://reclinejs.com/demos/
+
+
+http://ngmodules.org/modules/angular-google-chart
+
+
+
+https://github.com/tigbro/sencha-touch-angular-adapter
+
+http://docs.highcharts.com/#home
+
+http://socialcompare.com/en/comparison/javascript-graphs-and-charts-libraries

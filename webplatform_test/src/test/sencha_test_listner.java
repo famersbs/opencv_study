@@ -26,7 +26,7 @@ public class sencha_test_listner implements ServletContextListener {
     	 ServletContext scObj	= event.getServletContext();
     	 imagestore_root_path 	= scObj.getInitParameter("imagestore_root_path");
     	 process				= scObj.getInitParameter("process");
-    	 System.out.println( imagestore_root_path );
+    	 process_run_path		= scObj.getInitParameter("process_run_path");
     }
 
 	/**
@@ -39,5 +39,6 @@ public class sencha_test_listner implements ServletContextListener {
     
     public static String imagestore_root_path = "";
     public static String process = "";
+    public static String process_run_path = "./";
     
 }

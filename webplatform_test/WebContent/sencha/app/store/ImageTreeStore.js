@@ -23,7 +23,7 @@ Ext.define('Ext.app.store.ImageTreeStore', {
 	proxy: {
         type: 'ajax',
         api: {
-            read: 'data/filetree.jsp'
+            read: '../data/filetree.jsp'
         },
         reader: {
             type: 'json',

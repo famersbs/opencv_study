@@ -19,7 +19,7 @@ Ext.define('Ext.app.store.ImageViewStore', {
 	proxy: {
         type: 'ajax',
         api: {
-            read: 'data/imageinfo.jsp'
+            read: '../data/imageinfo.jsp'
         },
         reader: {
             type: 'json'
