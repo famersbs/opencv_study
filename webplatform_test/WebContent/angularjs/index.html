@@ -1,6 +1,33 @@
 <!doctype html>
-<html lang="en" ng-app="myApp" >
+<html lang="en" xmlns:ng="http://angularjs.org"  id="ng-app" ng-app="myApp" >
 <head>
+    <!--[if lte IE 8]>
+      <script src="lib/angular/json/json2.js"></script>
+    <![endif]-->    
+    
+    <!--[if lte IE 8]>
+      <script>
+        document.createElement('ng-include');
+        document.createElement('ng-pluralize');
+        document.createElement('ng-view');
+ 
+        // Optionally these for CSS
+        document.createElement('ng:include');
+        document.createElement('ng:pluralize');
+        document.createElement('ng:view');
+      </script>
+    <![endif]-->
+    <style>
+      ng\\:view {
+        display: block;
+        border: 1px solid red;
+      }
+ 
+      ng-include {
+        display: block;
+        border: 1px solid blue;
+      }
+    </style>
   <meta charset="utf-8">
   <title>My HTML File</title>
   <!-- <link rel="stylesheet" href="css/app.css"> -->
@@ -85,7 +112,7 @@
             <ul class="nav nav-list"  ng-controller="sideImgTreemenu" >
               <li class="nav-header" >Sidebar</li>
               <li ng-repeat="item in treeitem">
-              	<a ng-click="itemClick(item.name)">{{item.name}}</a>
+              	<a ng-click="itemClick(item.name)" href="#">{{item.name}}</a>
               </li>
             </ul>
           </div><!--/.well -->

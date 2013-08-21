@@ -20,3 +20,8 @@ https://github.com/tigbro/sencha-touch-angular-adapter
 http://docs.highcharts.com/#home
 
 http://socialcompare.com/en/comparison/javascript-graphs-and-charts-libraries
+
+
+-- angularjs 에 커스텀 태그 추가하기
+
+	http://mobicon.tistory.com/310

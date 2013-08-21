@@ -1,6 +1,23 @@
 <!doctype html>
-<html lang="en" ng-app="phonecat" >
+<html lang="en" xmlns:ng="http://angularjs.org"  id="ng-app" ng-app="phonecat" >
 <head>
+	<!--[if lte IE 8]>
+      <script src="lib/angular/json/json2.js"></script>
+    <![endif]-->    
+    
+    <!--[if lte IE 8]>
+      <script>
+        document.createElement('ng-include');
+        document.createElement('ng-pluralize');
+        document.createElement('ng-view');
+ 
+        // Optionally these for CSS
+        document.createElement('ng:include');
+        document.createElement('ng:pluralize');
+        document.createElement('ng:view');
+      </script>
+    <![endif]-->
+    
   <meta charset="utf-8">
   <title>My HTML File</title>
   <!-- <link rel="stylesheet" href="css/app.css"> -->

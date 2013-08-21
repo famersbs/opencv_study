@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" ng-app="Demo" ng-controller="AppController" >
+<head>
+  <meta charset="utf-8">
+  <title>Creating A Custom "Show" Directive In AngularJS</title>
+  <!-- <link rel="stylesheet" href="css/app.css"> -->
+  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-responsive.min.css">
+  
+   <style type="text/css">
+
+		ul {
+			height: 100px ;
+			list-style-type: none ;
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		li {
+			border: 1px solid #333333 ;
+			float: left ;
+			height: 100px ;
+			line-height: 100px ;
+			margin-right: 10px ;
+			overflow: hidden ;
+			text-align: center ;
+			width: 200px ;
+		}
+
+	</style>
+	
+    <link href="lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+    
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script src="lib/angular/angular-strap.min.js"></script>
+  <script src="pptapp/js/app.js"></script>
+  <script src="pptapp/js/controllers.js"></script>
+</head>
+<body >
+<h1>
+		Creating A Custom "Show" Directive In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggle()">Toggle Elements</a>
+	</p>
+
+	<ul>
+		<li bn-slide-show="isVisible" slide-show-duration="2000">
+
+			Using bnSlideShow
+
+		</li>
+		<li ng-show="isVisible">
+
+			Using ngShow
+
+		</li>
+	</ul>
+
+
+	<!--
+		Load jQuery andAngularJS from the CDN. In order for
+		AngularJS to use jQuery instead of its own jQLite, we
+		have to make sure jQuery is loaded first.
+	-->
+	<script
+		type="text/javascript"
+		src="//code.jquery.com/jquery-1.8.3.min.js">
+	</script>
+	<script
+		type="text/javascript"
+		src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js">
+	</script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var Demo = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Define our root-level controller for the application.
+		Demo.controller(
+			"AppController",
+			function( $scope, $route, $routeParams ){
+
+				// I toggle the value of isVisible.
+				$scope.toggle = function() {
+
+					$scope.isVisible = ! $scope.isVisible;
+
+				};
+
+				// Default the blocks to be visible.
+				$scope.isVisible = true;
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I hide and show elements based on the given model value.
+		// However, rather than using "display" style, I use jQuery's
+		// slideDown() / slideUp().
+		Demo.directive(
+			"bnSlideShow",
+			function() {
+
+				// I allow an instance of the directive to be hooked
+				// into the user-interaction model outside of the
+				// AngularJS context.
+				function link( $scope, element, attributes ) {
+
+					// I am the TRUTHY expression to watch.
+					var expression = attributes.bnSlideShow;
+
+					// I am the optional slide duration.
+					var duration = ( attributes.slideShowDuration || "fast" );
+
+
+					// I check to see the default display of the
+					// element based on the link-time value of the
+					// model we are watching.
+					if ( ! $scope.$eval( expression ) ) {
+
+						element.hide();
+
+					}
+
+
+					// I watch the expression in $scope context to
+					// see when it changes - and adjust the visibility
+					// of the element accordingly.
+					$scope.$watch(
+						expression,
+						function( newValue, oldValue ) {
+
+							// Ignore first-run values since we've
+							// already defaulted the element state.
+							if ( newValue === oldValue ) {
+
+								return;
+
+							}
+
+							// Show element.
+							if ( newValue ) {
+
+								element
+									.stop( true, true )
+									.slideDown( duration )
+								;
+
+							// Hide element.
+							} else {
+
+								element
+									.stop( true, true )
+									.slideUp( duration )
+								;
+
+							}
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>

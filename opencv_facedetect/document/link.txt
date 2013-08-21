@@ -15,3 +15,11 @@
 	
 * 이미지 비교
 	http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=50&MAEULNo=20&no=536083&ref=536078
+	
+	
+* 이미지 레이블링
+
+	http://harismoonamkunnu.blogspot.kr/2012/11/opencv-find-biggest-contour.html
+	
+		// 레이블링과 마커검증
+	http://fornangman.tistory.com/20
