@@ -38,8 +38,10 @@
 
 
 -----------------------------------------------
-
-http://wiki.openttd.org/Compiling_on_MinGW#Installing_MinGW_and_MSYS
+----------------------------------------------
+ * Windows 에서 mingw 설치 하기
+ http://stackoverflow.com/questions/10860352/getting-started-with-opencv-2-4-and-mingw-on-windows-7
+ http://wiki.openttd.org/Compiling_on_MinGW#Installing_MinGW_and_MSYS
 
 -- ocr 라이브러리 설치  - mingw 에서...
 http://www.sk-spell.sk.cx/compiling-leptonica-and-tesseract-ocr-with-mingwmsys
