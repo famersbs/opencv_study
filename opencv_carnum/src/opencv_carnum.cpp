@@ -40,162 +40,9 @@ void showImage( IplImage* image, const char* window_name ){
 	}
 }
 
-int main() {
-
-	const char* window_name = "car_num_test";
-
-	cvNamedWindow( window_name, 0 ); // 결과 영상을 띄울 윈도우
-
-	IplImage*	m_pImage;
-	IplImage*	gray;
-	IplImage*	binary;
-	IplImage*	end1;
-	IplImage*   img[MAX_IMAGE_SIZE];
-	int blub_count = 0;
-
-
-	m_pImage = cvLoadImage("res/aae.jpg", -1);
-	gray = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
-	cvCvtColor(m_pImage, gray, CV_RGB2GRAY);
-
-	cvThreshold(gray, gray, 1, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);//이진화
-	IplImage* labeled = cvCreateImage( cvSize( gray->width, gray->height ), 8, 3 );//레이블링 이미지
-	cvCvtColor(gray, labeled, CV_GRAY2BGR );//그레이를 RGB로 바꿔준다.
-
-	// 레이블링 알고리즘 사용
-	CBlobLabeling blob;
-	//blob.SetParam(gray, 50 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
-	blob.SetParam(gray, 50 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
-	//임의로 50 픽셀수 설정
-
-	blob.DoLabeling(); //레이블링 실시
-
-	int  opt[100];
-
-	// 잡영 제거 부분.
-	int nMaxWidth	= gray->width  * 3 / 10;	// 영상 가로 전체 크기의 50% 이상인 레이블은 제거
-	int nMaxHeight	= gray->height * 3 / 10;	// 영상 세로 전체 크기의 50% 이상인 레이블은 제거
-	blob.BlobSmallSizeConstraint( 15, 15 );
-	blob.BlobBigSizeConstraint( nMaxWidth, nMaxHeight );
-	// 픽셀 사이즈 30 미만은 제거
-
-	printf("blob first : %d\n", blob.m_nBlobs );
-
-	for( int i=0; i < blob.m_nBlobs ; i++ )
-	{
-
-
-		//레이블링된 각 위치값을 잡아주고
-		CvPoint	pt1 = cvPoint(blob.m_recBlobs[i].x, blob.m_recBlobs[i].y);
-		CvPoint pt2 = cvPoint(pt1.x + blob.m_recBlobs[i].width, pt1.y + blob.m_recBlobs[i].height);
-
-		// 이미지 관심영역 설정
-		cvSetImageROI(gray, blob.m_recBlobs[i]);
-		IplImage* sub_gray = cvCreateImage(cvSize(blob.m_recBlobs[i].width, blob.m_recBlobs[i].height), 8, 1);
-		cvThreshold(gray, sub_gray, 1, 255, CV_THRESH_BINARY_INV );
-
-		showImage( gray, window_name );
-
-		// 관심영역 해제
-		cvResetImageROI(gray);
-
-		////////////////////////////
-		// 레이블링
-		CBlobLabeling inner;
-		inner.SetParam(sub_gray, 5);
-
-		inner.DoLabeling();
-
-		int nSubMaxWidth	= sub_gray->width  * 8 / 10;
-		int nSubMaxHeight	= sub_gray->height * 8 / 10;
-
-		inner.BlobBigSizeConstraint( nSubMaxWidth, nSubMaxHeight );
-
-		if(inner.m_nBlobs > 6)
-		{
-			binary = cvCreateImage(cvSize( (sub_gray->width)*3, (int)(sub_gray->height)*3 ), IPL_DEPTH_8U, 1);
-			cvResize(sub_gray,binary,CV_INTER_LINEAR );
-
-			end1 = cvCreateImage( cvSize(binary->width, binary->height ), 8, 3 );//레이블링 이미지
-			cvCvtColor(binary, end1, CV_GRAY2BGR );//그레이를 RGB로 바꿔준다.
-
-			cvThreshold(binary, binary, 1, 255, CV_THRESH_BINARY);
-
-			CBlobLabeling fire;
-			fire.SetParam(binary, 100);
-			fire.DoLabeling();
-
-			int nwidth	= binary->width  * 5 / 10;	// 영상 가로 전체 크기의 80% 이상인 레이블은 제거
-			int nheight	= binary->height * 7.4 / 10;	// 영상 세로 전체 크기의 80% 이상인 레이블은 제거
-
-			fire.BlobSmallSizeConstraint( 10, 10 );
-			fire.BlobBigSizeConstraint( nwidth, nheight );
-			// 픽셀 사이즈 30 미만은 제거
-			int count = 0;
-
-			for( int i=0; i < fire.m_nBlobs; i++ )
-			{
-				//이미지는 템플릿 사이즈로 조정해준다.
-				//버퍼에 이미지를 받는다.
-				//교환해서 리사이즈한다.
-				//img[i] = cvCreateImage(cvSize(fire.m_recBlobs[i].width, fire.m_recBlobs[i].height), IPL_DEPTH_8U, 1);
-				img[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
-				//imgtemp[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
-
-				cvSetImageROI(binary,cvRect(fire.m_recBlobs[i].x,fire.m_recBlobs[i].y,fire.m_recBlobs[i].width,fire.m_recBlobs[i].height));
-				//imgtemp = (IplImage*)cvClone(binary);
-				cvResize((IplImage*)cvClone(binary),img[i],CV_INTER_LINEAR );
-
-				//img[i] = (IplImage*)cvClone(binary);
-				opt[i] = fire.m_recBlobs[i].x;
-
-				//레이블링된 각 위치값을 잡아주고
-				CvPoint	fire_pt1 = cvPoint(	fire.m_recBlobs[i].x, fire.m_recBlobs[i].y );
-				CvPoint fire_pt2 = cvPoint(	fire_pt1.x + fire.m_recBlobs[i].width, fire_pt1.y + fire.m_recBlobs[i].height );
-				// 각 레이블 표시
-				CvScalar color	= cvScalar( 0, 0, 255 );
-				cvDrawRect(end1, fire_pt1, fire_pt2, color );
-			}
-
-			IplImage* temp1;
-			int tem;
-			blub_count = fire.m_nBlobs; //번호판 블럽의 숫자 저장.
-
-			//레이블링 된 이미지의 x점을 기준으로 정렬한다.
-			for(int i=0; i < fire.m_nBlobs; i++)
-			{
-				for(int j=i+1; j < fire.m_nBlobs; j++)
-				{
-					if(opt[i] > opt[j])
-					{
-						tem = opt[i];
-						opt[i] = opt[j];
-						opt[j] = tem;
-						temp1 = (IplImage*)cvClone(img[i]);
-						img[i] = (IplImage*)cvClone(img[j]);
-						img[j] = (IplImage*)cvClone(temp1);
-					}
-				}
-			}
-
-			printf("blobs fire : %d \n", fire.m_nBlobs );
-
-			//레이블을 파일로 변환하는 부분//
-			/*
-			for( int i=0; i < fire.m_nBlobs; i++ )
-			{
-				char filename[512];
-				sprintf(filename, "%d.bmp", count++);
-				cvSaveImage(filename, img[i]);
-			}
-			*/
-			cvReleaseImage(&sub_gray);
-			cvReleaseImage(&temp1);
-
-		}
-	}
-
-	// 번호 추출 하기
+char* ImageToString( int blub_count, IplImage* img[]  )
+{
+	static char result[1024] = {0,};
 
 	IplImage* C[MAX_IMAGE_SIZE];
 	for(int i=0; i<MAX_IMAGE_SIZE; i++)
@@ -286,14 +133,11 @@ int main() {
 				}
 			}
 		}
-	//	temp.Format(_T("%d"),number_num[0]);
-	//	AfxMessageBox(temp);
+
 		final[a] = number_num[0];
 
 
 	}
-
-	char result[1024] = {0,};
 
 	if(blub_count == 7)
 	{
@@ -306,6 +150,8 @@ int main() {
 	else if (blub_count == 9)
 	{
 		sprintf(result,"%d%d %d%d %d%d%d%d%d",final[0],final[1],final[2],final[3],final[4],final[5],final[6],final[7],final[8]);
+	}else if(blub_count == 10){
+		sprintf(result,"%d%d %d%d %d%d%d%d%d %d",final[0],final[1],final[2],final[3],final[4],final[5],final[6],final[7],final[8], final[9]);
 	}else{
 
 		printf( "[blubcnt : %d] \n", blub_count );
@@ -313,6 +159,248 @@ int main() {
 			printf("%d ", final[i] );
 		}
 
+	}
+
+
+	return result;
+}
+
+
+
+int main() {
+
+	CvFont font;  //축에 글자 쓰기용
+	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, 0.3, 0.3, 0, 1);
+
+	const char* window_name = "car_num_test";
+	cvNamedWindow( window_name, 0 ); // 결과 영상을 띄울 윈도우
+	const char* window_name_r1 = "car_num_test_r1";
+	cvNamedWindow( window_name_r1, 0 ); // 결과 영상을 띄울 윈도우
+	const char* window_name_r2 = "car_num_test_r2";
+	cvNamedWindow( window_name_r2, 0 ); // 결과 영상을 띄울 윈도우
+
+
+	IplImage*	m_cloneImage;
+	IplImage*	m_pImage;
+	IplImage*	gray;
+	IplImage*	binary;
+	IplImage*	end1;
+	IplImage*   img[MAX_IMAGE_SIZE];
+	int blub_count = 0;
+
+
+	m_pImage = cvLoadImage("res/aad.jpg", -1);
+	gray = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
+	cvCvtColor(m_pImage, gray, CV_RGB2GRAY);
+
+	cvThreshold(gray, gray, 1, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);//이진화
+	IplImage* labeled = cvCreateImage( cvSize( gray->width, gray->height ), 8, 3 );//레이블링 이미지
+	cvCvtColor(gray, labeled, CV_GRAY2BGR );//그레이를 RGB로 바꿔준다.
+
+	// 레이블링 알고리즘 사용
+	CBlobLabeling blob;
+	blob.SetParam(gray, 50 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
+	//임의로 50 픽셀수 설정
+
+	blob.DoLabeling(); //레이블링 실시
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// 잡영 제거 전 레이블링
+	m_cloneImage = cvCloneImage(m_pImage);
+		// 레이블링 표시
+	for( int i = 0 ; i < blob.m_nBlobs; ++ i ){
+		CvPoint	pt1 = cvPoint(blob.m_recBlobs[i].x, blob.m_recBlobs[i].y);
+		CvPoint pt2 = cvPoint(pt1.x + blob.m_recBlobs[i].width, pt1.y + blob.m_recBlobs[i].height);
+		cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(255,0,0), 1, 8, 0 );
+	}
+
+	showImage( m_cloneImage, window_name );
+	cvReleaseImage(&m_cloneImage);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	int  opt[100];
+
+	// 잡영 제거 부분.
+	//int nMaxWidth	= gray->width  * 3 / 10;	// 영상 가로 전체 크기의 50% 이상인 레이블은 제거
+	//int nMaxHeight	= gray->height * 3 / 10;	// 영상 세로 전체 크기의 50% 이상인 레이블은 제거
+
+	int nMaxWidth	= gray->width;	// 영상 가로 전체 크기의 50% 이상인 레이블은 제거
+	int nMaxHeight	= gray->height;	// 영상 세로 전체 크기의 50% 이상인 레이블은 제거
+	blob.BlobSmallSizeConstraint( 15, 15 );
+	blob.BlobBigSizeConstraint( nMaxWidth, nMaxHeight );
+	// 픽셀 사이즈 30 미만은 제거
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// 잡영 제거 후 레이블링
+	m_cloneImage = cvCloneImage(m_pImage);
+		// 레이블링 표시
+	for( int i = 0 ; i < blob.m_nBlobs; ++ i ){
+		CvPoint	pt1 = cvPoint(blob.m_recBlobs[i].x, blob.m_recBlobs[i].y);
+		CvPoint pt2 = cvPoint(pt1.x + blob.m_recBlobs[i].width, pt1.y + blob.m_recBlobs[i].height);
+		cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(255,0,0), 1, 8, 0 );
+	}
+
+	showImage( m_cloneImage, window_name );
+	cvReleaseImage(&m_cloneImage);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	for( int i=0; i < blob.m_nBlobs ; i++ )
+	{
+
+
+		//레이블링된 각 위치값을 잡아주고
+		CvPoint	pt1 = cvPoint(blob.m_recBlobs[i].x, blob.m_recBlobs[i].y);
+		CvPoint pt2 = cvPoint(pt1.x + blob.m_recBlobs[i].width, pt1.y + blob.m_recBlobs[i].height);
+
+		// 이미지 관심영역 설정
+		cvSetImageROI(gray, blob.m_recBlobs[i]);
+		IplImage* sub_gray = cvCreateImage(cvSize(blob.m_recBlobs[i].width, blob.m_recBlobs[i].height), 8, 1);
+		cvThreshold(gray, sub_gray, 1, 255, CV_THRESH_BINARY_INV );
+
+		// 관심영역 해제
+		cvResetImageROI(gray);
+
+		////////////////////////////
+		// 레이블링
+		CBlobLabeling inner;
+		inner.SetParam(sub_gray, 5);
+
+		inner.DoLabeling();
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 각 라벨링 영역별 서브 추가 라벨링 ( 글짜 구분 하기 위함 )
+		m_cloneImage = cvCloneImage(m_pImage);
+			// 레이블링 표시
+		for( int i = 0 ; i < inner.m_nBlobs; ++ i ){
+			CvPoint	pt1s = cvPoint(inner.m_recBlobs[i].x + pt1.x, inner.m_recBlobs[i].y + pt1.y);
+			CvPoint pt2s = cvPoint(pt1s.x + inner.m_recBlobs[i].width, pt1s.y + inner.m_recBlobs[i].height);
+			cvDrawRect(m_cloneImage, pt1s, pt2s, CV_RGB(255,0,0), 1, 8, 0 );
+		}
+
+		showImage( m_cloneImage, window_name_r1 );
+		cvReleaseImage(&m_cloneImage);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		int nSubMaxWidth	= sub_gray->width  * 8 / 10;
+		int nSubMaxHeight	= sub_gray->height * 8 / 10;
+
+		inner.BlobSmallSizeConstraint( 10, 10 );	// 글씨는 5 픽샐 이하로 표현 할 수 없다.
+		inner.BlobBigSizeConstraint( nSubMaxWidth, nSubMaxHeight );
+
+		/*
+		 레이블 검증 에 추가할 두단계
+			1. 전체 크기중 평균을 내고, 그 평균에 약 70%에 속하는 녀석만
+			2. 레이블 중에서 처음과 끝 여백을 제외한 레이블간 간격의 평균의 절반 이하는 제거 하거나 하나로 합친다.
+		 */
+
+
+		if( inner.m_nBlobs >= 6 && inner.m_nBlobs < 10 )
+		{
+			binary = cvCreateImage(cvSize( (sub_gray->width)*3, (int)(sub_gray->height)*3 ), IPL_DEPTH_8U, 1);
+			cvResize(sub_gray,binary,CV_INTER_LINEAR );
+
+			end1 = cvCreateImage( cvSize(binary->width, binary->height ), 8, 3 );//레이블링 이미지
+			cvCvtColor(binary, end1, CV_GRAY2BGR );//그레이를 RGB로 바꿔준다.
+
+			cvThreshold(binary, binary, 1, 255, CV_THRESH_BINARY);
+
+			CBlobLabeling fire;
+			fire.SetParam(binary, 100);
+			fire.DoLabeling();
+
+			//int nwidth	= binary->width  * 5 / 10;	// 영상 가로 전체 크기의 80% 이상인 레이블은 제거
+			//int nheight	= binary->height * 7.4 / 10;	// 영상 세로 전체 크기의 80% 이상인 레이블은 제거
+			int nwidth	= binary->width  * 3 / 10;	// 영상 가로 전체 크기의 80% 이상인 레이블은 제거
+			int nheight	= binary->height * 9 / 10;	// 영상 세로 전체 크기의 80% 이상인 레이블은 제거
+
+			fire.BlobSmallSizeConstraint( 10, 10 );
+			fire.BlobBigSizeConstraint( nwidth, nheight );
+			// 픽셀 사이즈 30 미만은 제거
+			int count = 0;
+
+			for( int i=0; i < fire.m_nBlobs; i++ )
+			{
+				//이미지는 템플릿 사이즈로 조정해준다.
+				//버퍼에 이미지를 받는다.
+				//교환해서 리사이즈한다.
+				//img[i] = cvCreateImage(cvSize(fire.m_recBlobs[i].width, fire.m_recBlobs[i].height), IPL_DEPTH_8U, 1);
+				img[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
+				//imgtemp[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
+
+				cvSetImageROI(binary,cvRect(fire.m_recBlobs[i].x,fire.m_recBlobs[i].y,fire.m_recBlobs[i].width,fire.m_recBlobs[i].height));
+				//imgtemp = (IplImage*)cvClone(binary);
+				cvResize((IplImage*)cvClone(binary),img[i],CV_INTER_LINEAR );
+
+				//img[i] = (IplImage*)cvClone(binary);
+				opt[i] = fire.m_recBlobs[i].x;
+
+				//레이블링된 각 위치값을 잡아주고
+				CvPoint	fire_pt1 = cvPoint(	fire.m_recBlobs[i].x, fire.m_recBlobs[i].y );
+				CvPoint fire_pt2 = cvPoint(	fire_pt1.x + fire.m_recBlobs[i].width, fire_pt1.y + fire.m_recBlobs[i].height );
+				// 각 레이블 표시
+				CvScalar color	= cvScalar( 0, 0, 255 );
+				cvDrawRect(end1, fire_pt1, fire_pt2, color );
+
+
+			}
+
+			showImage( end1, window_name );
+
+			IplImage* temp1;
+			int tem;
+			blub_count = fire.m_nBlobs; //번호판 블럽의 숫자 저장.
+
+			//레이블링 된 이미지의 x점을 기준으로 정렬한다.
+			for(int i=0; i < fire.m_nBlobs; i++)
+			{
+				for(int j=i+1; j < fire.m_nBlobs; j++)
+				{
+					if(opt[i] > opt[j])
+					{
+						tem = opt[i];
+						opt[i] = opt[j];
+						opt[j] = tem;
+						temp1 = (IplImage*)cvClone(img[i]);
+						img[i] = (IplImage*)cvClone(img[j]);
+						img[j] = (IplImage*)cvClone(temp1);
+					}
+				}
+			}
+
+
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 각 라벨링 영역별 서브 추가 라벨링 ( 글짜 구분 하기 위함 )
+			m_cloneImage = cvCloneImage(m_pImage);
+
+
+				// 레이블링 표시
+			for( int i = 0 ; i < inner.m_nBlobs; ++ i ){
+				CvPoint	pt1s = cvPoint(inner.m_recBlobs[i].x + pt1.x, inner.m_recBlobs[i].y + pt1.y);
+				CvPoint pt2s = cvPoint(pt1s.x + inner.m_recBlobs[i].width, pt1s.y + inner.m_recBlobs[i].height);
+				cvDrawRect(m_cloneImage, pt1s, pt2s, CV_RGB(0,255,0), 1, 8, 0 );
+			}
+
+
+			cvPutText( m_cloneImage, ImageToString( blub_count, img ),
+						cvPoint(20, 10), &font, CV_RGB(0,0,255));
+
+			showImage( m_cloneImage, window_name_r2 );
+			cvReleaseImage(&m_cloneImage);
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+			// 번호 추출 하기
+			//printf("%d : %s \n" , i, ImageToString( blub_count, img ) );
+
+			//printf("blobs fire : %d \n", fire.m_nBlobs );
+
+
+			cvReleaseImage(&sub_gray);
+			cvReleaseImage(&temp1);
+
+		}
 	}
 
 	cvDestroyAllWindows();
