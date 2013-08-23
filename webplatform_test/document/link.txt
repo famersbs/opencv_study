@@ -21,6 +21,8 @@ http://docs.highcharts.com/#home
 
 http://socialcompare.com/en/comparison/javascript-graphs-and-charts-libraries
 
+http://briantford.com/blog/angular-d3.html
+
 
 -- angularjs 에 커스텀 태그 추가하기
 
@@ -29,3 +31,9 @@ http://socialcompare.com/en/comparison/javascript-graphs-and-charts-libraries
 	
 	
 http://jcf.daewoobrenic.co.kr/blog/?p=237
+
+
+============================================
+= angular js 에서 테스트 하기
+
+http://docs.angularjs.co.kr/tutorial/
