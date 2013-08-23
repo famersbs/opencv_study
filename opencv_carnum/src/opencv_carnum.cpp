@@ -30,11 +30,11 @@ using namespace std;
 
 // 기울어진 이미지의 경우  바로 세우는 로직 ( 이미지 테그 공식 ) 을 이용해서 인식 하면 인식 률이  많이 올라 갈 것 같음
 
-void showImage( IplImage* image, const char* window_name ){
+void showImage( IplImage* image, const char* window_name, int ispause ){
 	cvShowImage( window_name, image);
 
 	// 사용자 입력 대기
-	while( true ){
+	while( ispause == 1 ){
 		//haar를 이용해 얼굴 영역 검출
 		if( cvWaitKey(50) == 27 ) break;
 	}
@@ -57,7 +57,7 @@ char* ImageToString( int blub_count, IplImage* img[]  )
 	int number_temp_temp;
 	int number_num_temp;
 
-	char final[20]="";
+	char final[MAX_IMAGE_SIZE]="";
 
 	IplImage* res[10];
 
@@ -139,7 +139,11 @@ char* ImageToString( int blub_count, IplImage* img[]  )
 
 	}
 
-	if(blub_count == 7)
+	if(blub_count == 6)
+	{
+		sprintf(result, "%d%d %d %d%d%d",final[0],final[1],final[2],final[3],final[4],final[5]);
+	}
+	else if(blub_count == 7)
 	{
 		sprintf(result, "%d%d %d %d%d%d%d",final[0],final[1],final[2],final[3],final[4],final[5],final[6]);
 	}
@@ -152,7 +156,10 @@ char* ImageToString( int blub_count, IplImage* img[]  )
 		sprintf(result,"%d%d %d%d %d%d%d%d%d",final[0],final[1],final[2],final[3],final[4],final[5],final[6],final[7],final[8]);
 	}else if(blub_count == 10){
 		sprintf(result,"%d%d %d%d %d%d%d%d%d %d",final[0],final[1],final[2],final[3],final[4],final[5],final[6],final[7],final[8], final[9]);
-	}else{
+	}else if(blub_count == 11){
+		sprintf(result,"%d%d %d%d %d%d%d%d%d %d %d",final[0],final[1],final[2],final[3],final[4],final[5],final[6],final[7],final[8], final[9], final[10]);
+	}
+	else{
 
 		printf( "[blubcnt : %d] \n", blub_count );
 		for( int i = 0; i< blub_count ; ++ i ){
@@ -170,7 +177,7 @@ char* ImageToString( int blub_count, IplImage* img[]  )
 int main() {
 
 	CvFont font;  //축에 글자 쓰기용
-	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, 0.3, 0.3, 0, 1);
+	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, 0.7, 0.7, 0, 1);
 
 	const char* window_name = "car_num_test";
 	cvNamedWindow( window_name, 0 ); // 결과 영상을 띄울 윈도우
@@ -189,7 +196,7 @@ int main() {
 	int blub_count = 0;
 
 
-	m_pImage = cvLoadImage("res/aad.jpg", -1);
+	m_pImage = cvLoadImage("res/aab.jpg", -1);
 	gray = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
 	cvCvtColor(m_pImage, gray, CV_RGB2GRAY);
 
@@ -214,7 +221,7 @@ int main() {
 		cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(255,0,0), 1, 8, 0 );
 	}
 
-	showImage( m_cloneImage, window_name );
+	showImage( m_cloneImage, window_name, 0 );
 	cvReleaseImage(&m_cloneImage);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -241,9 +248,11 @@ int main() {
 		cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(255,0,0), 1, 8, 0 );
 	}
 
-	showImage( m_cloneImage, window_name );
+	showImage( m_cloneImage, window_name, 1 );
 	cvReleaseImage(&m_cloneImage);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	printf("Debug Msg : 1 \n" );
 
 	for( int i=0; i < blob.m_nBlobs ; i++ )
 	{
@@ -268,37 +277,39 @@ int main() {
 
 		inner.DoLabeling();
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		// 각 라벨링 영역별 서브 추가 라벨링 ( 글짜 구분 하기 위함 )
-		m_cloneImage = cvCloneImage(m_pImage);
-			// 레이블링 표시
-		for( int i = 0 ; i < inner.m_nBlobs; ++ i ){
-			CvPoint	pt1s = cvPoint(inner.m_recBlobs[i].x + pt1.x, inner.m_recBlobs[i].y + pt1.y);
-			CvPoint pt2s = cvPoint(pt1s.x + inner.m_recBlobs[i].width, pt1s.y + inner.m_recBlobs[i].height);
-			cvDrawRect(m_cloneImage, pt1s, pt2s, CV_RGB(255,0,0), 1, 8, 0 );
-		}
-
-		showImage( m_cloneImage, window_name_r1 );
-		cvReleaseImage(&m_cloneImage);
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		int nSubMaxWidth	= sub_gray->width  * 8 / 10;
+		int nSubMaxWidth	= sub_gray->width  * 3 / 10;
 		int nSubMaxHeight	= sub_gray->height * 8 / 10;
 
-		inner.BlobSmallSizeConstraint( 10, 10 );	// 글씨는 5 픽샐 이하로 표현 할 수 없다.
+		inner.BlobSmallSizeConstraint( 2, 2 );	// 글씨는 5 픽샐 이하로 표현 할 수 없다.	// min 으로 빼서는 안되고, 평균 값이나, 분포 값으로 빼야 한다.
 		inner.BlobBigSizeConstraint( nSubMaxWidth, nSubMaxHeight );
 
 		/*
 		 레이블 검증 에 추가할 두단계
 			1. 전체 크기중 평균을 내고, 그 평균에 약 70%에 속하는 녀석만
 			2. 레이블 중에서 처음과 끝 여백을 제외한 레이블간 간격의 평균의 절반 이하는 제거 하거나 하나로 합친다.
+			3. 만약 영역이 겹쳐 있을 경우는 어떻게 할까?
 		 */
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 잡영 제거 후 레이블링
+		m_cloneImage = cvCloneImage(m_pImage);
+			// 레이블링 표시
+		for( int i = 0 ; i < inner.m_nBlobs; ++ i ){
+			CvPoint	pt1_s = cvPoint(pt1.x + inner.m_recBlobs[i].x, pt1.y + inner.m_recBlobs[i].y);
+			CvPoint pt2_s = cvPoint(pt1_s.x + inner.m_recBlobs[i].width, pt1_s.y + inner.m_recBlobs[i].height);
+			cvDrawRect(m_cloneImage, pt1_s, pt2_s, CV_RGB(255,0,0), 1, 8, 0 );
+		}
 
+		showImage( m_cloneImage, window_name, 1 );
+		cvReleaseImage(&m_cloneImage);
 
-		if( inner.m_nBlobs >= 6 && inner.m_nBlobs < 10 )
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		printf("Debug Msg : 2 [%d]\n", i );
+
+		if( inner.m_nBlobs >= 6 && inner.m_nBlobs <= 10 )
 		{
 			binary = cvCreateImage(cvSize( (sub_gray->width)*3, (int)(sub_gray->height)*3 ), IPL_DEPTH_8U, 1);
-			cvResize(sub_gray,binary,CV_INTER_LINEAR );
+			cvResize(sub_gray,binary,CV_INTER_LINEAR );	// 일단 세배로 키웠다...
 
 			end1 = cvCreateImage( cvSize(binary->width, binary->height ), 8, 3 );//레이블링 이미지
 			cvCvtColor(binary, end1, CV_GRAY2BGR );//그레이를 RGB로 바꿔준다.
@@ -308,31 +319,29 @@ int main() {
 			CBlobLabeling fire;
 			fire.SetParam(binary, 100);
 			fire.DoLabeling();
-
-			//int nwidth	= binary->width  * 5 / 10;	// 영상 가로 전체 크기의 80% 이상인 레이블은 제거
-			//int nheight	= binary->height * 7.4 / 10;	// 영상 세로 전체 크기의 80% 이상인 레이블은 제거
 			int nwidth	= binary->width  * 3 / 10;	// 영상 가로 전체 크기의 80% 이상인 레이블은 제거
 			int nheight	= binary->height * 9 / 10;	// 영상 세로 전체 크기의 80% 이상인 레이블은 제거
 
 			fire.BlobSmallSizeConstraint( 10, 10 );
 			fire.BlobBigSizeConstraint( nwidth, nheight );
+
+			printf("Debug Msg : 3 \n" );
+
 			// 픽셀 사이즈 30 미만은 제거
 			int count = 0;
+
+			// 구역이 너무 많을 경우 번호판이 아니라고 판단하자~!
+			if( fire.m_nBlobs > MAX_IMAGE_SIZE ) continue;	// 다른걸
 
 			for( int i=0; i < fire.m_nBlobs; i++ )
 			{
 				//이미지는 템플릿 사이즈로 조정해준다.
 				//버퍼에 이미지를 받는다.
 				//교환해서 리사이즈한다.
-				//img[i] = cvCreateImage(cvSize(fire.m_recBlobs[i].width, fire.m_recBlobs[i].height), IPL_DEPTH_8U, 1);
 				img[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
-				//imgtemp[i] = cvCreateImage(cvSize(30, 45), IPL_DEPTH_8U, 1);
-
 				cvSetImageROI(binary,cvRect(fire.m_recBlobs[i].x,fire.m_recBlobs[i].y,fire.m_recBlobs[i].width,fire.m_recBlobs[i].height));
-				//imgtemp = (IplImage*)cvClone(binary);
 				cvResize((IplImage*)cvClone(binary),img[i],CV_INTER_LINEAR );
 
-				//img[i] = (IplImage*)cvClone(binary);
 				opt[i] = fire.m_recBlobs[i].x;
 
 				//레이블링된 각 위치값을 잡아주고
@@ -341,11 +350,11 @@ int main() {
 				// 각 레이블 표시
 				CvScalar color	= cvScalar( 0, 0, 255 );
 				cvDrawRect(end1, fire_pt1, fire_pt2, color );
-
-
 			}
 
-			showImage( end1, window_name );
+			showImage( end1, window_name , 1);
+
+			printf("Debug Msg : 4 \n" );
 
 			IplImage* temp1;
 			int tem;
@@ -356,6 +365,7 @@ int main() {
 			{
 				for(int j=i+1; j < fire.m_nBlobs; j++)
 				{
+					//printf("Debug Msg : 4.5 [%d %d] \n", i , j  );
 					if(opt[i] > opt[j])
 					{
 						tem = opt[i];
@@ -369,10 +379,11 @@ int main() {
 			}
 
 
+			printf("Debug Msg : 5 \n" );
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			// 각 라벨링 영역별 서브 추가 라벨링 ( 글짜 구분 하기 위함 )
 			m_cloneImage = cvCloneImage(m_pImage);
-
 
 				// 레이블링 표시
 			for( int i = 0 ; i < inner.m_nBlobs; ++ i ){
@@ -383,19 +394,14 @@ int main() {
 
 
 			cvPutText( m_cloneImage, ImageToString( blub_count, img ),
-						cvPoint(20, 10), &font, CV_RGB(0,0,255));
+						cvPoint(20, 30), &font, CV_RGB(0,0,255));
 
-			showImage( m_cloneImage, window_name_r2 );
+			showImage( m_cloneImage, window_name_r2, 1 );
 			cvReleaseImage(&m_cloneImage);
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-			// 번호 추출 하기
-			//printf("%d : %s \n" , i, ImageToString( blub_count, img ) );
-
-			//printf("blobs fire : %d \n", fire.m_nBlobs );
-
+			printf("Debug Msg : 6 \n" );
 
 			cvReleaseImage(&sub_gray);
 			cvReleaseImage(&temp1);
