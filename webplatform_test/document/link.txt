@@ -37,3 +37,62 @@ http://jcf.daewoobrenic.co.kr/blog/?p=237
 = angular js 에서 테스트 하기
 
 http://docs.angularjs.co.kr/tutorial/
+
+
+============================================
+= requireJS 
+
+http://requirejs.org/
+
+------------------------------------------------------
+= angular js 설명 자료
+
+	- http://www.cheatography.com/proloser/cheat-sheets/angularjs/
+
+	- http://programmingsummaries.tistory.com/124
+		: 컨트롤러간 통신 방법
+		
+		var myModule = angular.module('myModule', []);
+		
+		function ControllerZero($scope) {
+		    $scope.handleClick = function(msg) {
+		        $scope.$broadcast('handleChild', {message : msg}); 
+		    };
+		    
+		    $scope.$on('updateParent', function(event, args) {
+		        $scope.message = 'ZERO: ' + args.message;
+		    });  
+		}
+		
+		function ControllerOne($scope) {
+		    $scope.$on('handleChild', function(event, args) {
+		        $scope.message2 = 'ONE: ' + args.message;
+		    });        
+		    
+		    $scope.handleClick = function() {
+		        $scope.$emit('updateParent', {message: $scope.message2});
+		    };
+		    
+		}
+		
+		ControllerZero.$inject = ['$scope'];
+		
+		ControllerOne.$inject = ['$scope'];
+		
+		
+	- service, factory 모양만 차이가 있고, 초기화 순서가 factory -> service 입니다.	--> 어떤 부분이 중요한지는 모르겠으나... 조금 했갈릴지도....
+	
+	- $compile 객체는 HTML을 컴파일 해준다~!
+	
+	-directive 에서 template 에 코드를 넣을 수도 있고, templateUrl 을 이용하여 링크를 걸 수도 있다 (외부 이미지를 직접 넣을 수도있다 )
+	
+	- jQuery 로직을 먼저 타게 하려면 angularjs 보다 jQuery 를 먼저 타게 하면 좋다~!!
+	
+	
+	-requireJS를 사용할 경우 , 동적으로 CSS를 등록하고 해제 할 수 있으며, 디펜더시 설정을 깔끔하게 유지 할 수 있다.
+		: requireJS 에 대해서 조금더 공부 해 보면 깔끔한 UI쪽 프레임워크를 구성 할 수 있을 것 같내~!!
+	
+	- bootstrap-prettify  라는 것을 이용하면, 소스코드를 이쁘게 보여주고, 수정을 통해 바로 결과를 확인해 볼 수 있도록 할 수 있다~!!
+	
+	
+		
