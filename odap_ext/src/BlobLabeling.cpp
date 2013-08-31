@@ -84,7 +84,7 @@ int CBlobLabeling::Labeling(IplImage* image, int nThreshold)
 	// 포인트 메모리 해제
 	DeletevPoint();
 
-	if( nNumber != _DEF_MAX_BLOBS )		m_recBlobs = new CvRect [nNumber];
+	if( nNumber != _DEF_MAX_BLOBS )		m_recBlobs = new CvRect_2 [nNumber];
 
 	if( nNumber != 0 )	DetectLabelingRegion(nNumber, tmpBuf, nWidth, nHeight);
 
@@ -355,14 +355,14 @@ void CBlobLabeling::BlobSmallSizeConstraint(int nWidth, int nHeight)
 	_BlobSmallSizeConstraint(nWidth, nHeight, m_recBlobs, &m_nBlobs);
 }
 
-void CBlobLabeling::_BlobSmallSizeConstraint(int nWidth, int nHeight, CvRect* rect, int *nRecNumber)
+void CBlobLabeling::_BlobSmallSizeConstraint(int nWidth, int nHeight, CvRect_2* rect, int *nRecNumber)
 {
 	if(*nRecNumber == 0)	return;
 
 	int nX;
 	int ntempRec = 0;
 
-	CvRect* temp = new CvRect[*nRecNumber];
+	CvRect_2* temp = new CvRect_2[*nRecNumber];
 
 	for(nX = 0; nX < *nRecNumber; nX++)
 	{
@@ -392,14 +392,14 @@ void CBlobLabeling::BlobBigSizeConstraint(int nWidth, int nHeight)
 	_BlobBigSizeConstraint(nWidth, nHeight, m_recBlobs, &m_nBlobs);
 }
 
-void CBlobLabeling::_BlobBigSizeConstraint(int nWidth, int nHeight, CvRect* rect, int* nRecNumber)
+void CBlobLabeling::_BlobBigSizeConstraint(int nWidth, int nHeight, CvRect_2* rect, int* nRecNumber)
 {
 	if(*nRecNumber == 0)	return;
 
 	int nX;
 	int ntempRec = 0;
 
-	CvRect* temp = new CvRect [*nRecNumber];
+	CvRect_2* temp = new CvRect_2 [*nRecNumber];
 
 	for(nX = 0; nX < *nRecNumber; nX++)
 	{
@@ -427,7 +427,7 @@ void CBlobLabeling::_BlobBigSizeConstraint(int nWidth, int nHeight, CvRect* rect
 #define CENTER_X(rec) 				( (rec).x + ( (rec).width /2 ) )
 #define CENTER_Y(rec) 				( (rec).y + ( (rec).height /2 ) )
 
-bool crash_rect( CvRect rec1, CvRect rec2, int distance ){
+bool crash_rect( CvRect_2 rec1, CvRect_2 rec2, int distance ){
 
 	// 단순한 선분으로 만들자
 	int rec1_x1 = rec1.x - distance;
@@ -453,7 +453,7 @@ bool crash_rect( CvRect rec1, CvRect rec2, int distance ){
 #include <iostream>
 using namespace std;
 
-void paint_rect(CvRect rec ){
+void paint_rect(CvRect_2 rec ){
 	cout << rec.x << " " << rec.y << " " << rec.width << " " << rec.height <<" ";
 }
 
@@ -480,8 +480,8 @@ void CBlobLabeling::MergeLabel( int mergerange ){
 
 		int mergecnt = 0;
 		int ntempRec = 0;
-		CvRect* temp = new CvRect [m_nBlobs];
-		CvRect	target = m_recBlobs[curr_index];
+		CvRect_2* temp = new CvRect_2 [m_nBlobs];
+		CvRect_2	target = m_recBlobs[curr_index];
 
 		// 일단 겹치는 것만 ^^
 		for( int i = 0 ; i < m_nBlobs ; ++ i ){
@@ -546,4 +546,32 @@ void CBlobLabeling::MergeLabel( int mergerange ){
 	cout<< "count " << curcle_cnt << endl;
 
 
+}
+
+void	CBlobLabeling::setType_HitRange( CvRect rect, int type ){
+
+	CvRect_2 target;
+
+	target.x = rect.x;
+	target.y = rect.y;
+	target.width = rect.width;
+	target.height = rect.height;
+
+	for( int i = 0 ; i < m_nBlobs ; ++ i ){
+		if( crash_rect( target , m_recBlobs[i], 0 ) ){
+			m_recBlobs[i].type = type;
+		}
+	}
+
+}
+
+CvRect	CBlobLabeling::getrecBlob( int i ){
+	CvRect ret;
+
+	ret.x = m_recBlobs[i].x;
+	ret.y = m_recBlobs[i].y;
+	ret.width = m_recBlobs[i].width;
+	ret.height = m_recBlobs[i].height;
+
+	return ret;
 }

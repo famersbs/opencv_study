@@ -9,6 +9,26 @@ typedef struct
 	CvPoint ptReturnPoint;
 } Visited;
 
+class CvRect_2
+{
+public:
+	CvRect_2(){
+		x = 0;
+		y = 0;
+		width = 0;
+		height = 0;
+		type = 0;
+	}
+
+	int x;
+	int y;
+	int width;
+	int height;
+
+	int type;		// 해당 영역의 타입
+
+};
+
 class CBlobLabeling
 {
 public:
@@ -20,7 +40,11 @@ public:
 	int			m_nThreshold;			// 레이블링 스레스홀드(임계값)
 	Visited*	m_vPoint;				// 레이블링시 방문정보
 	int			m_nBlobs;				// 레이블의 갯수
-	CvRect*		m_recBlobs;				// 각 레이블 정보
+	CvRect_2*	m_recBlobs;				// 각 레이블 정보
+
+
+public:
+	CvRect		getrecBlob( int index );
 
 
 public:
@@ -55,16 +79,18 @@ private:
 public:
 	void	BlobSmallSizeConstraint(int nWidth, int nHeight);
 private:
-	void	_BlobSmallSizeConstraint(int nWidth, int nHeight, CvRect* rect, int* nRecNumber);
+	void	_BlobSmallSizeConstraint(int nWidth, int nHeight, CvRect_2* rect, int* nRecNumber);
 
 	// 가로, 세로 크기가 비교값 보다 큰 레이블 제거
 	// 지정한 값보다 큰 레이블 제거
 public:
 	void	BlobBigSizeConstraint(int nWidth, int nHeight);
 private:
-	void	_BlobBigSizeConstraint(int nWidth, int nHeight, CvRect* rect, int* nRecNumber);
+	void	_BlobBigSizeConstraint(int nWidth, int nHeight, CvRect_2* rect, int* nRecNumber);
 
 
+public:
+	void	setType_HitRange( CvRect rect, int type );
 
 	// 레이블 머징
 public:
