@@ -1,6 +1,7 @@
 #include <iostream>
 #include <opencv/cv.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace cv;
 using namespace std;
@@ -53,6 +54,82 @@ IplImage* FilterMax(IplImage *src,int nX, int nY)
     }
 
     return tmp;
+}
+
+/**
+ * 이미지 경로 받아서 템플릿 분석 진행
+ */
+CvPoint templateMatching( const char* src, const char* t ){
+
+	IplImage* image    = cvLoadImage(src, 1);
+	IplImage* templat  = cvLoadImage(t, 1);
+	int percent =100;// declare a destination IplImage object with correct size, depth and  channels
+	IplImage* image3 = cvCreateImage( cvSize((int)((image->width*percent)/100) ,
+	(int)((image->height*percent)/100) ),image->depth, image->nChannels );
+
+	//use cvResize to resize source to a destination image
+	cvResize(image, image3);
+	IplImage* image2   = cvCreateImage(cvSize(image3->width, image3->height),
+	IPL_DEPTH_8U,   1);
+	IplImage* templat2 = cvCreateImage(cvSize(templat->width,
+	templat->height),   IPL_DEPTH_8U, 1);
+
+	cvCvtColor(image3, image2, CV_BGR2GRAY);
+	cvCvtColor(templat, templat2, CV_BGR2GRAY);
+
+
+	int w = image3->width - templat->width + 1;
+	int h = image3->height - templat->height + 1;
+	IplImage* result = cvCreateImage(cvSize(w, h), IPL_DEPTH_32F, 1);
+	cvMatchTemplate(image2, templat2, result, CV_TM_CCORR_NORMED);
+
+	double min_val, max_val;
+	CvPoint min_loc, max_loc;
+	cvMinMaxLoc(result, &min_val, &max_val, &min_loc, &max_loc);
+
+	/*
+	cvRectangle(image3, max_loc, cvPoint(max_loc.x+templat->width,
+	max_loc.y+templat->height), cvScalar(0,1,1), 1);
+
+	cvShowImage("src", image3);
+	//cvShowImage("result image", result);
+	cvWaitKey(0);
+	*/
+
+	return max_loc;
+
+	/*
+	double min, max;
+	CvPoint left_top;
+	IplImage *A = cvLoadImage( src, -1); // 책상(A)을 먼저 읽고
+	IplImage *B = cvLoadImage( t , -1); // 스테이플러(B)를 읽는다.
+	//IplImage* C = cvCreateImage( cvSize( A->width - B->width+1, A->height - B->height+1 ), IPL_DEPTH_8U, 1 ); // 상관계수를 구할 이미지(C)
+	//IplImage* C = cvCreateImage( cvSize( A->width - B->width+1, A->height - B->height+1 ),
+	IplImage* C = cvCreateImage( cvSize( 1024, 1024 ),
+								IPL_DEPTH_8U, 1 ); // 상관계수를 구할 이미지(C)
+								//IPL_DEPTH_32F, 1 ); // 상관계수를 구할 이미지(C)
+
+	 IplImage *gA = cvCreateImage(cvGetSize(A), IPL_DEPTH_8U, 1);
+	 IplImage *gB = cvCreateImage(cvGetSize(B), IPL_DEPTH_8U, 1);
+
+	 cvCvtColor(A, gA, CV_RGB2GRAY);
+	 cvCvtColor(B, gB, CV_RGB2GRAY);
+
+	//cvMatchTemplate(gA, gB, C, CV_TM_SQDIFF_NORMED); // 상관계수를 구하여 C 에 그린다.
+	cvMatchTemplate(gA, gB, C, CV_TM_SQDIFF_NORMED); // 상관계수를 구하여 C 에 그린다.
+	cvMinMaxLoc(C, &min, &max, NULL, &left_top); // 상관계수가 최대값을 값는 위치 찾기
+
+	// 모든 이미지 릴리즈
+	cvReleaseImage(&A);
+	cvReleaseImage(&B);
+	cvReleaseImage(&gA);
+	cvReleaseImage(&gB);
+	cvReleaseImage(&C);
+	// 모든 윈도우 제거
+	cvDestroyAllWindows();
+
+	return left_top;
+	*/
 }
 
 /*
@@ -120,7 +197,7 @@ void procOdap( const char* image_path ){
 		// 절반 이상 크기의 라벨은 제거
 	blob.BlobBigSizeConstraint( m_pImage->width, m_pImage->height / 2  );
 		// 레이블 머지
-	blob.MergeLabel( 40 ); 	// 몇 픽샐 이상 안떨어져있다면 합친다. ( 즉 겹쳐져 있거나, 얼마 떨어지지 않은 녀석  옆으로든 아래로든 )
+	blob.MergeLabel( 23 ); 	// 몇 픽샐 이상 안떨어져있다면 합친다. ( 즉 겹쳐져 있거나, 얼마 떨어지지 않은 녀석  옆으로든 아래로든 )
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 잡영 제거 전 레이블링
@@ -144,60 +221,30 @@ void procOdap( const char* image_path ){
 	//cvReleaseImage(&m_cloneImage);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 	////////////////////////////////////////////////////////////////
 	// 번호 탬플릿 매칭을 통한 보기 영역 추축
 
-		// 번호 영역 가져오기
-	IplImage* template_img[5];
-	template_img[0] = cvLoadImage("res/template/1.png", -1);
-	template_img[1] = cvLoadImage("res/template/2.png", -1);
-	template_img[2] = cvLoadImage("res/template/3.png", -1);
-	template_img[3] = cvLoadImage("res/template/4.png", -1);
-	template_img[4] = cvLoadImage("res/template/5.png", -1);
-	for(int i=0; i <5; i++)
-	{// 받은 이미지 이진화
-		cvThreshold(template_img[i], template_img[i], 1, 255, CV_THRESH_BINARY);
-	}
+	const char* template_img_path[] = {
+			"res/template/1.png",
+			"res/template/2.png",
+			"res/template/3.png",
+			"res/template/4.png",
+			"res/template/5.png"
+	};
 
-		// 번호 이미지를 통해 답 영역 찾기
+	for( int i = 0 ; i < 5 ; ++ i ){
 
-	// 현재의 layer 영역 을 추출
-	for( int j = 0 ; j < 5 ; ++ j ){
-
-		// 전체 이미지에서 각 번호가 있는 영역을 찾습니다.
-
-		// 그리고 그 영역에 가장 근접한 레이블링 영역을 해당 문제의 번호로 처리 합니다.
-
-		double min, max;
-		CvPoint left_top;
-		IplImage *A = gray; // 책상(A)을 먼저 읽고
-		IplImage *B = template_img[j]; // 스테이플러(B)를 읽는다.
-		IplImage* C = cvCreateImage( cvSize( A->width - B->width+1, A->height - B->height+1 ), IPL_DEPTH_8U, 1 ); // 상관계수를 구할 이미지(C)
-		cvMatchTemplate(A, B, C, CV_TM_CCOEFF_NORMED); // 상관계수를 구하여 C 에 그린다.
-		cvMinMaxLoc(C, &min, &max, NULL, &left_top); // 상관계수가 최대값을 값는 위치 찾기
-		//cvRectangle(A, left_top, cvPoint(left_top.x + B->width, left_top.y + B->height), CV_RGB(255,0,0)); // 찾은 물체에 사격형을 그린다
+		CvPoint point = templateMatching( image_path, template_img_path[i] );
 
 		CvRect find_range;
-		find_range.x = left_top.x;
-		find_range.y = left_top.y;
-		find_range.width = B->width;
-		find_range.height = B->height;
+		find_range.x = point.x;
+		find_range.y = point.y;
+		find_range.width = 10;
+		find_range.height = 10;
 
 
-		blob.setType_HitRange( find_range, j + 1 );	// 해당 영역과 겹치는 레이블의 타입을 설정 한다.
-
-
-		//cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(255,0,0), 1, 8, 0 );
-
+		blob.setType_HitRange( find_range, i + 1 );	// 해당 영역과 겹치는 레이블의 타입을 설정 한다.
 	}
-
-	for(int i=0; i <5; i++)
-	{// 받은 이미지 이진화
-	cvReleaseImage(&template_img[i]);
-	}
-
-
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 잡영 제거 전 레이블링
@@ -242,6 +289,7 @@ void procOdap( const char* image_path ){
 int main() {
 
 	procOdap("res/case1.png");
+
 	/*
 	procOdap("res/case2a.png");		// 실패
 	procOdap("res/case2b.png");		// 실패
@@ -251,8 +299,10 @@ int main() {
 	procOdap("res/case2f.png");		// 보기만 분리 실패
 	procOdap("res/case3a.png");		// 보기만 분리 실패	--> merge를 30으로 하면 좋다.
 	procOdap("res/case3b.png");		// 보기만 분리 실패	--> merge를 25으로 하면 좋다.
+	*/
 	procOdap("res/case3c.png");		// --> merge를 20으로 해야 한다.
 	procOdap("res/case4a.png");		// --> merge를 23 정도?
+	/*
 	procOdap("res/case4b.png");		// 답이 통합으로 나옴 ( 간격만으로는 구분 불가 )
 	procOdap("res/case4c.png");		// --> merge = 23 good ~ ^^
 	procOdap("res/case5.png");		// 실패 ..
