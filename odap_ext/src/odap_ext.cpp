@@ -12,7 +12,9 @@ using namespace std;
 #include "OdapMetaBuilder.h"
 #include "OdapUtil.h"
 
-
+/**
+ * 아래 케이스를 늘려 가는형태가 되면 될것 같은데... ~!
+ */
 void procOdap( const char* image_path, OdapMetaBuilder* builder, bool isDebug ){
 	CvFont font;  //축에 글자 쓰기용
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, 0.7, 0.7, 0, 1);
