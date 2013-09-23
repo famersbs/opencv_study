@@ -196,7 +196,7 @@ int main() {
 	int blub_count = 0;
 
 
-	m_pImage = cvLoadImage("res/aab.jpg", -1);
+	m_pImage = cvLoadImage("res/aae.jpg", -1);
 	gray = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
 	cvCvtColor(m_pImage, gray, CV_RGB2GRAY);
 
