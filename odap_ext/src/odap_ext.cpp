@@ -40,18 +40,21 @@ void procOdap( const char* image_path, OdapMetaBuilder* builder, bool isDebug ){
 
 	gray3 = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
 	cvErode( gray2, gray3 );	// 팽창 연산
-	setAllBlack( gray3 );
+	setAllBlack( gray3);
 	cvThreshold(gray3, gray, 1, 255, CV_THRESH_BINARY_INV );	// 반전 후 라벨링
+	//cvThreshold(gray3, gray, 1, 255, CV_THRESH_BINARY );	// 반전 후 라벨링
+
 
 	if( isDebug ){
-		showImage( gray, window_name, 0 );
+		showImage( gray, window_name, 1 );
 	}
 
 	//cout<< "labeling after1" << endl;
 
 	// 레이블링 알고리즘 사용
 	CBlobLabeling blob;
-	blob.SetParam(gray, 1 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
+	blob.SetParam(gray,20 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
+	//blob.SetParam(gray, 10 );	// 레이블링 할 이미지와 최소 픽셀수 등을 설정
 
 	blob.DoLabeling(); //레이블링 실시
 
@@ -148,6 +151,68 @@ void procOdap( const char* image_path, OdapMetaBuilder* builder, bool isDebug ){
 
 }
 
+void procNumbering( const char* image_path, OdapMetaBuilder* builder, bool isDebug ){
+	const char* window_name = image_path;
+		if( isDebug ){
+			cvNamedWindow( window_name, 0 ); // 결과 영상을 띄울 윈도우
+		}
+
+		IplImage*	m_cloneImage;
+		IplImage*	m_pImage;
+		IplImage*	gray;
+
+		m_pImage = cvLoadImage(image_path, -1);
+
+		gray = cvCreateImage(cvGetSize(m_pImage), IPL_DEPTH_8U, 1);
+
+		cvCvtColor(m_pImage, gray, CV_RGB2GRAY);
+
+		////////////////////////////////////////////////////////////////
+		// 번호 탬플릿 매칭을 통한 보기 영역 추축
+
+		const char* template_img_path[] = {
+				"res/template/1.png",
+				"res/template/2.png",
+				"res/template/3.png",
+				"res/template/4.png",
+				"res/template/5.png"
+		};
+		CvRect find_range[5];
+
+		for( int i = 0 ; i < 5 ; ++ i ){
+			CvPoint point = templateMatching( image_path, template_img_path[i] );
+			find_range[i].x = point.x;
+			find_range[i].y = point.y;
+			find_range[i].width = 10;
+			find_range[i].height = 10;
+
+			builder->addExam( i+1, find_range[i].x, find_range[i].y, find_range[i].width, find_range[i].height );
+		}
+
+		if( isDebug ){
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 잡영 제거 전 레이블링
+			cout << "clone before" << endl;
+			m_cloneImage = m_pImage;
+			cout << "clone after" << endl;
+
+
+				// 레이블링 표시
+			for( int i = 0 ; i < 5; ++ i ){
+
+				CvPoint	pt1 = cvPoint( find_range[i].x, find_range[i].y );
+				CvPoint pt2 = cvPoint( find_range[i].x + find_range[i].width, find_range[i].y + find_range[i].height);
+
+				cvDrawRect(m_cloneImage, pt1, pt2, CV_RGB(0,255,0), 1, 8, 0 );
+			}
+
+			showImage( m_cloneImage, window_name, 0 );
+			//cvReleaseImage(&m_cloneImage);
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+		}
+
+}
+
 /**
  *
  * 1) 레이블링 ( 무제 영역과, 답 영역, 예시 영역으로 나눈다 )
@@ -167,12 +232,24 @@ int main( int argc, char* argv[] ) {
 		return -1;
 	}
 
+	printf("RunPath : %s\n", argv[0] );
+	printf("ImagePath : %s\n", argv[1] );
+	printf("ResultPath : %s\n", argv[2] );
+
 	bool isDebug = false;
 
 	OdapMetaBuilder builder;
 	builder.setProperty( "filename", argv[1] );
 
-	procOdap("res/case1.png", &builder, isDebug);
+	//procOdap("res/case1.png", &builder, isDebug);
+	//procOdap(argv[1], &builder, isDebug);
+	procNumbering( argv[1], &builder, isDebug );
+	// 사용자 입력 대기
+
+	while( isDebug ){
+		//haar를 이용해 얼굴 영역 검출
+		if( cvWaitKey(50) == 27 ) break;
+	}
 
 	if( builder.checkIsCorrect() ){
 
@@ -183,9 +260,9 @@ int main( int argc, char* argv[] ) {
 		}
 		fclose( fp );
 
-		printf("Is Problem... Write Success [%s] \n", argv[2] );
+		printf("Is not Problem... Write Success [%s] \n", argv[2] );
 	}else{
-		printf("Is not Problem... \n" );
+		printf("Is Problem... \n" );
 		return -1;
 	}
 
@@ -206,11 +283,7 @@ int main( int argc, char* argv[] ) {
 	procOdap("res/case6.png");		// 문제만 분리됨
 	*/
 
-	// 사용자 입력 대기
 
-	while( isDebug ){
-		//haar를 이용해 얼굴 영역 검출
-		if( cvWaitKey(50) == 27 ) break;
-	}
+
 	return 0;
 }
