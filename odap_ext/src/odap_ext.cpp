@@ -241,7 +241,6 @@ int main( int argc, char* argv[] ) {
 	OdapMetaBuilder builder;
 	builder.setProperty( "filename", argv[1] );
 
-	//procOdap("res/case1.png", &builder, isDebug);
 	//procOdap(argv[1], &builder, isDebug);
 	procNumbering( argv[1], &builder, isDebug );
 	// 사용자 입력 대기

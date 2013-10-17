@@ -1,28 +1,18 @@
 package com.odap;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
 
-import com.odap.util.NADXMLObj;
+import com.odap.verifyer.ImagePanel;
 
 public class odap_ext_verifyer {
 
@@ -53,85 +43,6 @@ public class odap_ext_verifyer {
 	        }
 	        return ext;
 	    }
-	}
-	
-	/**
-	 * 
-	 * @author famersbs
-	 *
-	 */
-	public class ImagePanel extends JPanel{
-
-	    /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private BufferedImage image = null;
-		private Rectangle[] rects = new Rectangle[5] ;
-
-	    public ImagePanel() {
-	    	loadImage( "res/040330/040330_G3_KO_007.gif");
-	    }
-	    
-	    private void alert( String msg ){
-	    	image = null;
-	    	JOptionPane.showMessageDialog(null,msg,"Image Load Fail",JOptionPane.WARNING_MESSAGE);
-	    }
-	    
-	    public void loadImage( String imgPath ){
-	    	try {                
-	    		image = ImageIO.read(new File(imgPath));
-
-	    	} catch (IOException ex) {
-	    		ex.printStackTrace();
-	    	}
-	    	
-	    	// 문제 영역 가져오기
-	    	try {
-				NADXMLObj info = NADXMLObj.createObjectFromFile(imgPath + ".xml" );
-				
-				List<NADXMLObj> examples = info.getChild("example").getChilds("element");
-				
-				Iterator<NADXMLObj> i = examples.iterator();
-				
-				while( i.hasNext() ){
-					NADXMLObj cur = i.next();
-					
-					int num = Integer.parseInt( cur.getAttribute("num") );
-					int x = Integer.parseInt( cur.getAttribute("x"));
-					int y = Integer.parseInt( cur.getAttribute("y"));
-					int w = Integer.parseInt( cur.getAttribute("w"));
-					int h = Integer.parseInt( cur.getAttribute("h"));
-					
-					rects[num - 1] = new Rectangle(x,y,w,h );
-					
-				}
-				
-			} catch (FileNotFoundException e) {
-				alert( "" + e );
-			} catch (IOException e) {
-				alert( "" + e );
-			} catch (Exception e ){
-				alert( "" + e );
-			}
-	    	
-	    	// 다시 그리기
-    		repaint();
-	    }
-
-	    @Override
-	    protected void paintComponent(Graphics g) {
-	        super.paintComponent(g);
-	        if( null != image ){
-	        	g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters 
-	        	
-	        	g.setColor( new Color( 0x00FF00 ) );
-	        	for( int i = 0 ; i < rects.length ; ++ i ){
-	        		g.drawRect(rects[i].x,rects[i].y,rects[i].width,rects[i].height );
-	        	}
-	        }
-	    }
-
 	}
 	
 	public void go() {

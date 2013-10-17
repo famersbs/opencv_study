@@ -107,7 +107,7 @@ public class odap_ext_runner {
 	public static void main(String[] args) {
 		String dbUrl = "jdbc:mysql://14.63.184.255/odabnote";
 	    String dbClass = "com.mysql.jdbc.Driver";
-	    String query = "Select id, image_path from questions where id < 100 ";
+	    String query = "Select id, image_path from questions order by id DESC limit 100";
 	    String username = "odab_ext";
 	    String password = "tmakxmgksrhdqntmqrhks";
 	    String image_path = "http://cdn.odab.net/img/questions/";
