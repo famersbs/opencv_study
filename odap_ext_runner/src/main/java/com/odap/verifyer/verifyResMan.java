@@ -1,11 +1,12 @@
 package com.odap.verifyer;
 
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class verifyResMan {
 
 	private BufferedImage 	image = null;
 	private Rectangle[] rects = new Rectangle[5];
+	private String			image_path = "";
 	
 	/**
 	 * 
@@ -45,6 +47,7 @@ public class verifyResMan {
 	 * @param imgPath
 	 */
 	private verifyResMan( String imgPath ){
+		image_path = imgPath;
 		loadImage( imgPath );
 	}
 
@@ -96,5 +99,39 @@ public class verifyResMan {
 		}
     	
     }
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean saveXML(){
+		boolean ret = false;
+		File fp = new File( image_path + ".xml" );
+		
+		try {
+			OutputStream out = new FileOutputStream( fp );
+			
+			OdapMetaBuilder builder = new OdapMetaBuilder();
+			
+			builder.setProperty("file", image_path);
+			
+			for( int i = 0 ; i< rects.length ; ++ i ){
+				builder.addExam( i + 1, rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+			}
+			
+			out.write( builder.toXMLString().getBytes());
+			
+			out.close();
+			
+			ret = true;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return ret;
+	}
 	
 }

@@ -29,6 +29,8 @@ public class ImagePanel extends JPanel implements MouseMotionListener, MouseList
 	private Image			scaled_image = null;
 	private Dimension		last_dim = null;
 	private double			scale = 1;
+	
+	private int curedit_number_idx = 0; 
 
     public ImagePanel() {
     }
@@ -167,15 +169,18 @@ public class ImagePanel extends JPanel implements MouseMotionListener, MouseList
 
 	public void mouseReleased(MouseEvent e) {
 		edit_enter = false;
+		
+		if( 0 < curedit_number_idx && 6 > curedit_number_idx ){
 			
-		// 일단 첫번째 것만 바꾼다.
-		Rectangle[] rects = resman.getRects();
+			// 일단 첫번째 것만 바꾼다.
+			Rectangle[] rects = resman.getRects();
+			
+			rects[curedit_number_idx - 1].x		 	= getreScalepos( edit_rect.x );
+			rects[curedit_number_idx - 1].y		 	= getreScalepos( edit_rect.y );
+			rects[curedit_number_idx - 1].width	 	= getreScalepos( edit_rect.width );
+			rects[curedit_number_idx - 1].height	= getreScalepos( edit_rect.height );
 		
-		rects[0].x		 = getreScalepos( edit_rect.x );
-		rects[0].y		 = getreScalepos( edit_rect.y );
-		rects[0].width	 = getreScalepos( edit_rect.width );
-		rects[0].height	 = getreScalepos( edit_rect.height );
-		
+		}
 		repaint();
 	}
 	public void mouseDragged(MouseEvent e) {
@@ -202,20 +207,26 @@ public class ImagePanel extends JPanel implements MouseMotionListener, MouseList
 		
 	}
 
-	public void mouseMoved(MouseEvent e) {
+	public void mouseMoved(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+
+	/**
+	 * Save Request 
+	 */
+	public void saveXML() {
+		if( null != resman )
+			resman.saveXML();
 		
 	}
 
-	public void mouseClicked(MouseEvent e) {
-		
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		
-	}
-
-	public void mouseExited(MouseEvent e) {
-		
+	/**
+	 * 
+	 * @param i	 0 is no edit, 1 ~ 5 Number Edit.
+	 */
+	public void setEditNumber(int i) {
+		curedit_number_idx = i;
 	}
 
 

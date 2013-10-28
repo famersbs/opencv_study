@@ -8,6 +8,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
@@ -88,9 +89,12 @@ public class odap_ext_verifyer {
 		
 			// tool bar 
 		JToolBar toolBar = new JToolBar("Still draggable");
-		JButton button = new JButton("open file");// 버튼 생성
+		JButton open_btn = new JButton("open file");// 파일 오픈
+		JButton save_btn = new JButton("save file");// 파일 저장
+		JButton[] number_btns = new JButton[6];		// 에디트 버튼
+		final JLabel	status_lbl = new JLabel(" no edit");	// 에디트 상황 라벨
 		
-		button.addActionListener( new ActionListener(){
+		open_btn.addActionListener( new ActionListener(){
 
 			public void actionPerformed(ActionEvent event) {
 				
@@ -104,8 +108,43 @@ public class odap_ext_verifyer {
 			
 		});
 		
-		toolBar.add(button);
+		save_btn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event) {
+				img_panel.saveXML();
+			}
+		});
+		
 
+		toolBar.add(open_btn);
+		toolBar.add(save_btn);
+		
+		
+		
+		for( int i = 0 ; i < number_btns.length; ++ i ){
+			String label = "" + ( i );
+			if( i == 0 ) label = "no edit";
+				
+			number_btns[i] = new JButton( label );
+			
+			number_btns[i].addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event) {
+					String label = ((JButton) event.getSource()).getText();
+					int cur_idx = 0;
+					
+					if( !"no edit".equals(label) )
+						cur_idx = Integer.parseInt( label );
+					
+					img_panel.setEditNumber( cur_idx );
+					
+					status_lbl.setText( " " + label );
+				}
+			});
+			
+			toolBar.add(number_btns[i]);
+			
+		}
+		
+		toolBar.add(status_lbl);
 		
 			// panel add
 		panel.add( toolBar , BorderLayout.PAGE_START );
