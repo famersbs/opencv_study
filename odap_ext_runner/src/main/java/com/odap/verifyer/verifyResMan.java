@@ -48,6 +48,12 @@ public class verifyResMan {
 	 */
 	private verifyResMan( String imgPath ){
 		image_path = imgPath;
+		
+		// 리소스 초기화
+		for( int i = 0 ; i < 5 ; ++ i ){
+			rects[i] = new Rectangle( 0,0,0,0 );
+		}
+		
 		loadImage( imgPath );
 	}
 
@@ -60,7 +66,6 @@ public class verifyResMan {
 		return new verifyResMan( imgPath );
 	}
 	
-	
 	private void loadImage( String imgPath ){
     	try {                
     		image = ImageIO.read(new File(imgPath));
@@ -68,6 +73,10 @@ public class verifyResMan {
     	} catch (IOException ex) {
     		ex.printStackTrace();
     	}
+    	
+    	// XML 파일 존재 여부 확인
+    	File verify = new File( imgPath + ".xml" );
+    	if( !verify.canRead() ) return;
     	
     	// 문제 영역 가져오기
     	try {

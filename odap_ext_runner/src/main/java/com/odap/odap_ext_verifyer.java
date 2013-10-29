@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -13,10 +15,23 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
 
+import com.odap.util.NADXMLObj;
 import com.odap.verifyer.ImagePanel;
 
 public class odap_ext_verifyer {
+	
+	public String respath = "./";
 
+	public odap_ext_verifyer( String config_path ) throws FileNotFoundException, IOException{
+		
+		// config load
+		NADXMLObj config = NADXMLObj.createObjectFromFile( config_path );
+		
+		respath = config.getChild("respath").getContent();
+		
+		
+	}
+	
 	/**
 	 * 
 	 * @author famersbs
@@ -54,7 +69,7 @@ public class odap_ext_verifyer {
 			// Image 
 		final ImagePanel img_panel = new ImagePanel();
 		final JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File("./") );
+		fc.setCurrentDirectory(new File(respath) );
 		fc.addChoosableFileFilter(new FileFilter(){
 
 			public boolean accept(File f) {
@@ -159,9 +174,11 @@ public class odap_ext_verifyer {
 	
 	/**
 	 * @param args
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
-		new odap_ext_verifyer().go();
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		new odap_ext_verifyer( args[0] ).go();
 	}
 
 }
