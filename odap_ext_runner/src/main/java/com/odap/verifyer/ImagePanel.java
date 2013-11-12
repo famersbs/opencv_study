@@ -7,7 +7,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -23,15 +22,15 @@ public class ImagePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private verifyResMan	resman = null;
 	private Image			scaled_image = null;
-	private Dimension		last_dim = null;
-	private double			scale = 1;
-	
-	private int curedit_number_idx = 0; 
-	
+	private ImagePanelScaleCalcer	scaler = null;
 	private ImagePanelNumberChooser chooser = null;
-
-    public ImagePanel() {
+	private int curedit_number_idx = 0;
+	
+	private boolean isChanged = false;
+	
+    public ImagePanel(ImagePanelScaleCalcer imagePanelScaleCalcer) {
     	changeChooser( new ImagePanelNumberChooser_NoEdit() );
+    	scaler = imagePanelScaleCalcer;
     }
     
     /**
@@ -50,15 +49,19 @@ public class ImagePanel extends JPanel{
      * 
      * @param msg
      */
+    /*
     private void alert( String msg ){
     	JOptionPane.showMessageDialog(null,msg,"Image Load Fail",JOptionPane.WARNING_MESSAGE);
     }
+    */
     
     public void loadImage( String imgPath ){
     	
     	// load resource
     	resman = verifyResMan.create(imgPath);
 		repaint();
+		
+		isChanged = false;
     }
     
     /**
@@ -66,37 +69,15 @@ public class ImagePanel extends JPanel{
      */
     private void CalcScale(){
     	
-    	// 사이즈가 변경 되었을 경우 계산을 다시 한다.
-    	if( null == last_dim || last_dim.equals( this.getSize() ) ){
-    		// scale 처리
-        	Dimension size = this.getSize();
-        	
-        	double w2 = 1;
-    		double h2 = 1;
+    	BufferedImage image = resman.getImage();
+    	if( scaler.CalcScale( this.getSize(), new Dimension( image.getWidth(), image.getHeight() ) ) ) {
     		
-    		BufferedImage image = resman.getImage();
-
+    		double w2 = scaler.getScaledpos( image.getWidth() );
+    		double h2 = scaler.getScaledpos( image.getHeight() );
     		
-        	// 비율 계산
-        	if( size.height < image.getHeight() ){
-        		// 세로 비율 계산
-        		double w = size.width;
-        		double h = size.height;
-        		double w1 = image.getWidth();
-        		double h1 = image.getHeight();
-
-        		//  calc
-        		scale = h / h1;
-        		w2 = scale * w1;
-        		h2 = h;
-        		
-        		scaled_image = image.getScaledInstance( (int)w2, (int)h2, Image.SCALE_FAST);
-        		
-        	}else{
-        		scaled_image = image;
-        		scale = 1;
-        	}
-        	
+    		// 스케일 이미지 만들기
+    		scaled_image = image.getScaledInstance( (int)w2, (int)h2, Image.SCALE_FAST);
+    		
     	}
     	
     }
@@ -107,7 +88,7 @@ public class ImagePanel extends JPanel{
      * @return
      */
     public int getScaledpos( int pos ){
-    	return (int) ( scale * pos );
+    	return scaler.getScaledpos( pos );
     }
     
     /**
@@ -116,13 +97,12 @@ public class ImagePanel extends JPanel{
      * @return
      */
     public int getreScalepos( int pos ){
-    	return (int) ( pos / scale );
+    	return scaler.getreScalepos( pos );
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
         
         if( null != resman ){
         	
@@ -151,8 +131,9 @@ public class ImagePanel extends JPanel{
 	 * Save Request 
 	 */
 	public void saveXML() {
-		if( null != resman )
+		if( null != resman && isChanged ){
 			resman.saveXML();
+		}
 	}
 
 	/**
@@ -176,6 +157,8 @@ public class ImagePanel extends JPanel{
 			rects[curedit_number_idx - 1].y		 	= rect.y;
 			rects[curedit_number_idx - 1].width	 	= rect.width;
 			rects[curedit_number_idx - 1].height	= rect.height;
+			
+			isChanged = true;
 		}
 	}
 

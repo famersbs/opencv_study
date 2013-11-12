@@ -58,11 +58,12 @@ public class ImagePanelNumberChooser_FixedDraw implements ImagePanelNumberChoose
 	public void drawEdit(Graphics g) {
 		// put editable mode
 		g.setColor( new Color( 0xFF0000) );
+		
 		// 저장 시에는 스케일에 맞게 저장 되어야 한다.
-		g.drawRect( target.getScaledpos( cur_mouse_x ), 
-					target.getScaledpos( cur_mouse_y ),
-					target.getScaledpos( chooseWidth ),
-					target.getScaledpos( chooseHeight ) );
+		g.drawRect( cur_mouse_x , 
+					 cur_mouse_y ,
+					 target.getScaledpos( chooseWidth ) ,
+					 target.getScaledpos( chooseHeight ) );
 	}
 	
 	
@@ -89,16 +90,17 @@ public class ImagePanelNumberChooser_FixedDraw implements ImagePanelNumberChoose
 		
 		Rectangle rect = new Rectangle( );
 		
+		// x,y 를 그대로 쓰는 이유는 보이는 대로 찍혀야 하기 때문입니다.
 		rect.x		 	= target.getreScalepos( cur_mouse_x );
 		rect.y		 	= target.getreScalepos( cur_mouse_y );
-		rect.width	 	= target.getreScalepos( chooseWidth );
-		rect.height		= target.getreScalepos( chooseHeight );
+		rect.width	 	= chooseWidth;
+		rect.height		= chooseHeight;
 		
 		target.setNumberRect( rect );
-		
-		
+
 	}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
+
 
 }

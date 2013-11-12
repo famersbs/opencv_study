@@ -119,5 +119,5 @@ public class ImagePanelNumberChooser_FreeDraw implements ImagePanelNumberChooser
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-
+	
 }

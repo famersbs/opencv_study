@@ -35,5 +35,5 @@ public interface ImagePanelNumberChooser {
 	 * @param g
 	 */
 	void	drawEdit( Graphics g );
-	
+
 }

@@ -3,7 +3,6 @@ package com.odap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -14,26 +13,25 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.NumberFormat;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
 import javax.swing.SpringLayout;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.NumberFormatter;
 
 import layout.SpringUtilities;
 
@@ -41,22 +39,36 @@ import com.javaswingcomponents.accordion.JSCAccordion;
 import com.javaswingcomponents.accordion.TabOrientation;
 import com.javaswingcomponents.accordion.listener.AccordionEvent;
 import com.javaswingcomponents.accordion.listener.AccordionListener;
+import com.odap.util.NADKeyBoardMan;
 import com.odap.util.NADXMLObj;
+import com.odap.verifyer.ImageListManager;
 import com.odap.verifyer.ImagePanel;
 import com.odap.verifyer.ImagePanelNumberChooser;
 import com.odap.verifyer.ImagePanelNumberChooser_FixedDraw;
 import com.odap.verifyer.ImagePanelNumberChooser_FreeDraw;
 import com.odap.verifyer.ImagePanelNumberChooser_NoEdit;
+import com.odap.verifyer.ImagePanelScaleCalc_atHeight;
+import com.odap.verifyer.ImagePanelScaleCalc_atWidth;
+import com.odap.verifyer.ImagePanelScaleCalcer;
 
 public class odap_ext_verifyer {
 	
 	public String respath = "./";
+	public String scaletype = "screen_height";
+	public String scale_opt_size = "0";
 
 	public odap_ext_verifyer( String config_path ) throws FileNotFoundException, IOException{
 		
 		// config load
 		NADXMLObj config = NADXMLObj.createObjectFromFile( config_path );
 		respath = config.getChild("respath").getContent();
+		
+		try{
+			scaletype = config.getChild("scale").getChild("type").getContent();
+			scale_opt_size = config.getChild("scale").getChild("size").getContent();
+		}catch( Exception e ){
+			
+		}
 		
 	}
 	
@@ -188,6 +200,7 @@ public class odap_ext_verifyer {
 		toolBar.add(status_lbl);
 		
 		/** Key Pad Choose Number **/
+		/*
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 		  .addKeyEventDispatcher(new KeyEventDispatcher() {
 		      public boolean dispatchKeyEvent(KeyEvent e) {
@@ -205,6 +218,35 @@ public class odap_ext_verifyer {
 		        return false;
 		      }
 		});
+		*/
+		
+		
+		// Key Event 등록
+		NADKeyBoardMan.KEventListener listner = new NADKeyBoardMan.KEventListener() {
+			public void onKey(int key) {
+				int choose_number = -1;
+	            
+				if (key >= KeyEvent.VK_1 && key <= KeyEvent.VK_5 ) 
+	            	choose_number = key - KeyEvent.VK_1;
+	            else if( key >= KeyEvent.VK_NUMPAD1 && key <= KeyEvent.VK_NUMPAD5 ) 
+	            	choose_number = key - KeyEvent.VK_NUMPAD1;
+	            else 
+	            	return;
+				number_btns[choose_number + 1].doClick();
+			}
+		};
+		
+		NADKeyBoardMan.addListener(KeyEvent.VK_1, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_2, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_3, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_4, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_5, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_NUMPAD1, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_NUMPAD2, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_NUMPAD3, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_NUMPAD4, listner );
+		NADKeyBoardMan.addListener(KeyEvent.VK_NUMPAD5, listner );
+		
 	}
 	
 	private JLabel createLabel( String text ){
@@ -344,6 +386,19 @@ public class odap_ext_verifyer {
 
 	}
 	
+	
+	// 이미지 스케일 계산기
+	private ImagePanelScaleCalcer calcer = null;
+	private ImagePanelScaleCalcer createScaleCalcer(){
+		
+		//fixed : 스케일 1로 고정, screen_height : 스크린 높이에 맞춤, width : 가로 사이즈를 고정 함
+		
+		if( scaletype.equals( "screen_height" ) ) return new ImagePanelScaleCalc_atHeight();
+		if( scaletype.equals( "width" ) ) return new ImagePanelScaleCalc_atWidth( Integer.parseInt(scale_opt_size) );
+		
+		return new ImagePanelScaleCalcer();
+	}
+	
 	public void go() {
 		
 		final JFrame frame = new JFrame("odab ext verifyer");// 프레임 생성
@@ -351,19 +406,28 @@ public class odap_ext_verifyer {
 		JPanel panel = new JPanel( new BorderLayout() );// 패널 생성
 		
 			// Image Panel
-		final ImagePanel img_panel = new ImagePanel();
-		
+		final ImagePanel img_panel = new ImagePanel( createScaleCalcer() );
+	
 			// tool bar ( Default ) 
 		JToolBar toolBar = new JToolBar("Still draggable");
-		addToToolbar( toolBar, frame, img_panel );
+		addToToolbar( toolBar, frame, img_panel );		
+		
+			// file list bar
+		JList	list = new JList();
+		JScrollPane list_scroll = new JScrollPane(list);
 
 			// arcodian panel
 		JSCAccordion accordion = new JSCAccordion();
 		addToSideChooser( accordion, img_panel );
 		
+			// Side Panel
+		JPanel sidePanel = new JPanel( new GridLayout(2,0) );
+		sidePanel.add( list_scroll );
+		sidePanel.add( accordion );
+		
 			// panel add
 		panel.add( toolBar , BorderLayout.PAGE_START );
-		panel.add( accordion, BorderLayout.EAST );
+		panel.add( sidePanel, BorderLayout.EAST );
 		panel.add( img_panel, BorderLayout.CENTER );
 		
 		
@@ -375,6 +439,12 @@ public class odap_ext_verifyer {
 		
 		// chooser ^^ 
 		img_panel.changeChooser( fixed_chooser );
+		
+		
+		
+		
+		// Image List Manager
+		new ImageListManager(list, respath, img_panel ).load();
 		
 	}
 	
