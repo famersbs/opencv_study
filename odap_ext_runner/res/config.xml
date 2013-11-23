@@ -3,7 +3,7 @@
 	<respath>/Users/famersbs/git/opencv_study/odap_ext_runner/res/040330</respath>
 	<scale>
 		<type>	<!-- fixed : 스케일 1로 고정, screen_height : 스크린 높이에 맞춤, width : 가로 사이즈를 고정 함 -->
-		width
+		screen_height
 		</type>
 		<size>
 		500
