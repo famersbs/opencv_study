@@ -100,7 +100,7 @@ Ext.define('Ext.app.view.Portal', {
 	                    id: 'app-portal',
 	                    xtype: 'portalpanel',
 	                    region: 'center',
-	                    items: [{id: 'col-1'},{id: 'col-2'},]
+	                    items: [{id: 'col-1'},{id: 'col-2'},{id: 'col-3'}]
 	                }]
 	            }]
 	        });

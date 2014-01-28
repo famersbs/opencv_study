@@ -225,7 +225,12 @@ void procNumbering( const char* image_path, OdapMetaBuilder* builder, bool isDeb
  *
  */
 #include <stdio.h>
+#include "example/example5.h"
 int main( int argc, char* argv[] ) {
+
+	run_example5();
+
+	return 0;
 
 	if( argc < 3 ){
 		printf( "odap_ext [img path] [result path]\n");
@@ -264,7 +269,6 @@ int main( int argc, char* argv[] ) {
 		printf("Is Problem... \n" );
 		return -1;
 	}
-
 	/*
 	procOdap("res/case2a.png");		// 실패
 	procOdap("res/case2b.png");		// 실패

@@ -116,7 +116,7 @@ public class fileproc {
 		    // 자바 1.5 이상에서는 이렇게 1줄로
 		    
 		    ProcessBuilder builder = new ProcessBuilder( sencha_test_listner.process, target_path );
-		    builder.directory(new File( "C:\\Users\\Administrator\\Desktop\\OpenCV_스터디\\project\\opencv_proc\\Debug" ) );
+		    builder.directory(new File( "/Users/famersbs/git/opencv_study/opencv_proc/" ) );
 		    Process oProcess = builder.start();  
 
 		    // 외부 프로그램 출력 읽기
