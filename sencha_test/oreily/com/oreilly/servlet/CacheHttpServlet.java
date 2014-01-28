@@ -6,6 +6,7 @@ package com.oreilly.servlet;
 
 import java.io.*;
 import java.util.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -395,6 +396,30 @@ class CacheHttpServletResponse implements HttpServletResponse {
   public String encodeRedirectUrl(String url) { 
     return this.encodeRedirectURL(url);
   }
+
+@Override
+public String getHeader(String arg0) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Collection<String> getHeaderNames() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Collection<String> getHeaders(String arg0) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public int getStatus() {
+	// TODO Auto-generated method stub
+	return 0;
+}
 }
 
 class CacheServletOutputStream extends ServletOutputStream {

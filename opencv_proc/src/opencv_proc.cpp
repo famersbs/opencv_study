@@ -22,8 +22,8 @@ int facedetect_test_img_binary( const char* path ){
 
 	char origin_path[1024] = {0,};
 	char save_path[1024] = {0,};
-	sprintf(origin_path, "%s\\%s", path, "origin.png" );
-	sprintf(save_path, "%s\\%s", path, "binary.png" );
+	sprintf(origin_path, "%s/%s", path, "origin.png" );
+	sprintf(save_path, "%s/%s", path, "binary.png" );
 
 
 	IplImage* image = cvLoadImage( origin_path  );
@@ -61,8 +61,8 @@ int facedetect_test( const char* path )  {
 	char origin_path[1024] = {0,};
 	char save_path[1024] = {0,};
 
-	sprintf(origin_path, "%s\\%s", path, "origin.png" );
-	sprintf(save_path, "%s\\%s", path, "facedect.png" );
+	sprintf(origin_path, "%s/%s", path, "origin.png" );
+	sprintf(save_path, "%s/%s", path, "facedect.png" );
 
 	CvHaarClassifierCascade* cascade = 0;
 	cascade = (CvHaarClassifierCascade*) cvLoad(classifer, 0, 0, 0 );

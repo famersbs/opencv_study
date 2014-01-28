@@ -9,9 +9,9 @@
 		String key = param_i.next();
 		System.out.println( key + " " + request.getParameter( key ) );
 	}
-	
-	System.out.println("---------------------------------------------");
 	*/
+	System.out.println("is file tree ---------------------------------------------");
+	
 	
 	
 	
@@ -34,9 +34,16 @@
 	%>
       {
          "name":"<%=list[i].getName() %>",
-         "id":"<%=list[i].getName() %>",  
-      },
-	<% 
+         "id":"<%=list[i].getName() %>"
+   <%
+   			if( i + 1 < list.length )
+   			{
+   				%> }, <% 	
+   			}
+   			else
+   			{
+   				%> } <%
+   			}
 		}
  	%>    	
    ]

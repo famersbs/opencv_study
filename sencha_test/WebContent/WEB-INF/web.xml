@@ -15,11 +15,11 @@
   
   <context-param>
     <param-name>imagestore_root_path</param-name>
-    <param-value>D:/ProjectSource/java_workspace/sencha_test/imgstore_root</param-value>
+    <param-value>/Users/famersbs/git/opencv_study/sencha_test/imgstore_root</param-value>
   </context-param>
   
   <context-param>
   	<param-name>process</param-name>
-  	<param-value>C:/Users/Administrator/Desktop/OpenCV_스터디/project/opencv_proc/Debug/opencv_proc.exe</param-value>
+  	<param-value>/Users/famersbs/git/opencv_study/opencv_proc/Debug/opencv_proc</param-value>
   </context-param>
 </web-app>
